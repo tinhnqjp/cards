@@ -209,24 +209,7 @@ exports.tmp = function (req, res) {
           message: error
         });
       });
-
-    // var card = new Card();
-    // card.title = req.body.title;
-    // arrWords = content.split("\n\n");
-    // arrWords.forEach(word => {
-    //   var strings = word.split("\t");
-    //   var obj = new Word();
-    //   obj.front = strings[0];
-    //   obj.back = strings[1];
-    //   obj.card = card;
-    //   obj.user = req.user;
-    //   obj.save();
-    //   card.words.push(obj);
-    // });
-    // card.save();
   }
-  // console.log('​exports.create -> arrWords', arrWords);
-  // res.json(arrWords);
 };
 
 function createCard(title, arrWords, user) {

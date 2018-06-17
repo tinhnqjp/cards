@@ -66,5 +66,10 @@
         $scope.prev();
       }
     };
+
+    $scope.memorize = function() {
+      
+    };
+
   }
 })();
