@@ -41,3 +41,9 @@ a:hover .header-profile-image {
 .has-error .help-inline.error-text {
   display: inline;
 }
+.h100 { height: 100px; }
+.h150 { height: 150px; }
+.h200 { height: 200px; }
+.h300 { height: 300px; }
+.h400 { height: 400px; }
+.h500 { height: 500px; }
