@@ -57,8 +57,8 @@
     this.copy = function (cardId) {
       return $http.post('/api/cards/' + cardId + '/copy', null, { ignoreLoadingBar: true });
     };
-    this.play = function (cardId) {
-      return $http.get('/api/play', null, { ignoreLoadingBar: true });
+    this.play = function (ids) {
+      return $http.post('/api/play', {ids: ids }, { ignoreLoadingBar: true });
     };
     return this;
   }

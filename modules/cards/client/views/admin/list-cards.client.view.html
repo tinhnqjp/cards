@@ -44,6 +44,8 @@
           <td class="w3-left-align" data-ng-bind="card.back"></td>
           <td class="w3-center" data-ng-bind="card.created | date:'yyyy/MM/dd'"></td>
           <td class="w3-center" style="width: 270px">
+            <a class="w3-button w3-green w3-small" href="/admin/cards/play/?id={{card._id}}">
+              <i class="glyphicon glyphicon-pencil"></i>Play</a> 
             <button class="w3-button w3-blue w3-small" data-ui-sref="admin.cards.edit({cardId: card._id})">
               <i class="glyphicon glyphicon-pencil"></i> 編集</button>
             <button class="w3-button w3-orange w3-small" ng-click="vm.copy(card)">

@@ -3,19 +3,21 @@
 
   angular.module('core').controller('AppController', AppController);
 
-  AppController.$inject = ['$scope', 'CardsService', 'CardsApi'];
+  AppController.$inject = ['$scope', 'CardsService', 'CardsApi', '$location', '$state', '$stateParams'];
 
-  function AppController($scope, CardsService, CardsApi) {
+  function AppController($scope, CardsService, CardsApi, $location, $state, $stateParams) {
     var vm = this;
     $scope.currentPage = 1;
     $scope.isFlipped = [];
     $scope.listQuestion = [];
     $scope.isSpeed = false;
+    $scope.ids = $location.search().id;
 
-    initData();
+    // initData();
 
-    function initData() {
-      CardsApi.play().then(function(res) {
+    
+    $scope.initData = function() {
+      CardsApi.play($scope.ids).then(function(res) {
         $scope.listQuestion = res.data;
       });
     }

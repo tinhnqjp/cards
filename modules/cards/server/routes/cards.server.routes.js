@@ -24,7 +24,7 @@ module.exports = function (app) {
   // Finish by binding the card middleware
   app.param('cardId', cards.cardByID);
 
-  app.route('/api/play').get(cards.play);
+  app.route('/api/play').post(cards.play);
   app.route('/api/tmp').post(cards.tmp);
 
 };

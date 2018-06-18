@@ -7,7 +7,7 @@
 
   CardsAdminListController.$inject = ['CardsService', 'CardsApi', '$scope', '$state', '$window', 'Authentication'];
 
-  function CardsAdminListController(CardsService, CardsApi, $scope) {
+  function CardsAdminListController(CardsService, CardsApi, $scope, $state) {
     var vm = this;
     vm.currentPage = 1;
     vm.pageSize = 15;
@@ -18,15 +18,19 @@
     function initData() {
       vm.offset = (vm.currentPage - 1) * vm.pageSize;
       var input = { page: vm.currentPage, limit: vm.pageSize, keyword: vm.keyword };
-      // console.log(input);
+      console.log(input);
       CardsService.get(input, function (output) {
         vm.cards = output.laws;
         vm.totalItems = output.total;
         vm.currentPage = output.current;
+        
       });
+      
     }
 
     vm.pageChanged = function () {
+      $state.transitionTo('admin.cards.play', {id: "5b23951384ab4653f841b49a"}, {notify: false});
+      // $state.go('admin.cards.play({id: "5b23951384ab4653f841b49a"})');
       initData();
     };
 

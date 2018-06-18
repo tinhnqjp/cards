@@ -177,17 +177,22 @@ exports.cardByID = function (req, res, next, id) {
 };
 
 exports.play = function (req, res) {
-  var limit = Number(req.query.limit) || 10;
-  Word.find()
-    .limit(limit)
-    .sort('-created').exec(function (err, words) {
-      if (err) {
-        return res.status(422).send({
-          message: errorHandler.getErrorMessage(err)
-        });
-      } else {
-        res.json(words);
-      }
+  var ids = req.body.ids || null;
+  if (!ids) {
+    return res.status(422).send({
+      message: 'ids null'
+    });
+  }
+  getWordsByCardIds(ids)
+    .then(function (listWord) {
+      console.info('**OK**');
+      res.send(listWord);
+    })
+    .catch(function (error) {
+      console.error('**ERROR**', error);
+      return res.status(422).send({
+        message: error
+      });
     });
 };
 
@@ -244,6 +249,32 @@ function foreachWord(arrWords, card, user) {
     promises.push(createWord(front, back, card, user));
   });
   return Promise.all(promises);
+}
+
+function getWordsByCardIds(ids) {
+  return new Promise(function (resolve, reject) {
+    var cardIds = [];
+    try {
+      console.log(ids);
+      if (ids instanceof Array) {
+        for (var index in ids) {
+          cardIds.push(new mongoose.Types.ObjectId(ids[index]));
+        }
+      } else {
+        cardIds.push(new mongoose.Types.ObjectId(ids));
+      }
+    } catch (error) {
+      reject({ message: 'Id incorrect' });
+    }
+    Word.find({ 'card': { $in: cardIds } })
+      .sort('-created').exec(function (err, words) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(words)
+        }
+      });
+  });
 }
 
 function createWord(front, back, card, user) {
