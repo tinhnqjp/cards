@@ -7,6 +7,7 @@ var path = require('path'),
   mongoose = require('mongoose'),
   Card = mongoose.model('Card'),
   Word = mongoose.model('Word'),
+  Memorize = mongoose.model('Memorize'),
   _ = require('lodash'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
@@ -61,9 +62,9 @@ exports.read = function (req, res) {
  */
 exports.update = function (req, res) {
   var card = req.card;
-
-  card.title = req.body.title;
-  card.content = req.body.content;
+  console.log(req.body);
+  // card.title = req.body.title;
+  // card.content = req.body.content;
 
   card.save(function (err) {
     if (err) {
@@ -163,7 +164,10 @@ exports.cardByID = function (req, res, next, id) {
     });
   }
 
-  Card.findById(id).populate('user', 'displayName').exec(function (err, card) {
+  Card.findById(id)
+  .populate('words')
+  .populate('user', 'displayName')
+  .exec(function (err, card) {
     if (err) {
       return next(err);
     } else if (!card) {
@@ -183,10 +187,45 @@ exports.play = function (req, res) {
       message: 'ids null'
     });
   }
-  getWordsByCardIds(ids)
-    .then(function (listWord) {
-      console.info('**OK**');
-      res.send(listWord);
+  var cardIds = [];
+  try {
+    console.log(ids);
+    if (ids instanceof Array) {
+      for (var index in ids) {
+        cardIds.push(new mongoose.Types.ObjectId(ids[index]));
+      }
+    } else {
+      cardIds.push(new mongoose.Types.ObjectId(ids));
+    }
+  } catch (error) {
+    console.log({ message: 'Id incorrect' });
+  }
+
+  // save
+  getMemorizes(req.user, cardIds)
+    .then(function (memorizes) {
+      if (memorizes) {
+        res.json(memorizes);
+      } else {
+        getWordsByCardIds(cardIds)
+          .then(function (listWord) {
+            var words = [];
+            listWord.forEach(word => {
+              words.push({
+                word: word,
+                memorize: 0
+              });
+            });
+            var memorize = new Memorize();
+            memorize.user = req.user;
+            memorize.card = cardIds;
+            memorize.words = words;
+            return memorize.save();
+          })
+          .then(function (memorize) {
+            res.json(memorize);
+          })
+      }
     })
     .catch(function (error) {
       console.error('**ERROR**', error);
@@ -196,26 +235,97 @@ exports.play = function (req, res) {
     });
 };
 
-exports.tmp = function (req, res) {
-
-  var arrWords;
-  var content = req.body.content;
-  // console.log(content);
-  if (content) {
-    arrWords = content.split("\n\n");
-    createCard(req.body.title, arrWords, req.user)
-      .then(function (result) {
-        console.info('**OK**');
-        res.send(result);
-      })
-      .catch(function (error) {
-        console.error('**ERROR**', error);
+exports.remembered = function (req, res) {
+  var id = req.body.id || null;
+  var remembered = req.body.remembered || 0;
+  console.log(id, remembered);
+  if (!id) {
+    return res.status(422).send({
+      message: 'id null'
+    });
+  }
+  var condition = {
+    $and: [
+      { 'user': req.user },
+      { 'words.word': id }]
+  };
+  Memorize.find(condition)
+    .sort('-created').exec(function (error, result) {
+      if (error) {
         return res.status(422).send({
           message: error
         });
-      });
-  }
+        // reject(error);
+      } else {
+        result.forEach(memorize => {
+          memorize.words.forEach(item => {
+            // console.log('word', item.word, id);
+            if (item.word == id) {
+              item.memorize = remembered;
+            }
+          });
+          memorize.save();
+        });
+        res.json(result);
+        // resolve(result);
+      }
+    });
 };
+
+
+exports.tmp = function (req, res) {
+  var id = req.body.id || null;
+  var remembered = req.body.remembered || null;
+  if (!id) {
+    return res.status(422).send({
+      message: 'id null'
+    });
+  }
+  var condition = {
+    $and: [
+      { 'user': user },
+      { 'words.word': id }]
+  };
+  Memorize.find(condition)
+    .sort('-created').exec(function (error, result) {
+      if (error) {
+        return res.status(422).send({
+          message: error
+        });
+        // reject(error);
+      } else {
+        result.forEach(memorize => {
+          memorize.words.forEach(item => {
+            // console.log('word', item.word, id);
+            if (item.word == id) {
+              item.memorize = remembered;
+              console.log('word', item.word, id);
+            }
+          });
+          memorize.save();
+        });
+        res.json(result);
+        // resolve(result);
+      }
+    });
+};
+
+function getMemorizes(user, cardIds) {
+  return new Promise(function (resolve, reject) {
+    var condition = {
+      $and: [{ 'user': user },
+      { 'card': cardIds }]
+    };
+    Memorize.findOne(condition)
+      .sort('-created').populate('words.word').exec(function (error, result) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+  });
+}
 
 function createCard(title, arrWords, user) {
   return new Promise(function (resolve, reject) {
@@ -251,21 +361,9 @@ function foreachWord(arrWords, card, user) {
   return Promise.all(promises);
 }
 
-function getWordsByCardIds(ids) {
+function getWordsByCardIds(cardIds) {
   return new Promise(function (resolve, reject) {
-    var cardIds = [];
-    try {
-      console.log(ids);
-      if (ids instanceof Array) {
-        for (var index in ids) {
-          cardIds.push(new mongoose.Types.ObjectId(ids[index]));
-        }
-      } else {
-        cardIds.push(new mongoose.Types.ObjectId(ids));
-      }
-    } catch (error) {
-      reject({ message: 'Id incorrect' });
-    }
+
     Word.find({ 'card': { $in: cardIds } })
       .sort('-created').exec(function (err, words) {
         if (err) {

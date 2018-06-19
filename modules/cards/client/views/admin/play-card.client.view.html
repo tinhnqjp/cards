@@ -1,102 +1,60 @@
-<div class="w3-container" style="margin-top:75px">
-  <style>
-    .flip {
-      -webkit-perspective: 800;
-      position: relative;
-      z-index: 1px;
-    }
-
-    .flip .card.flipped {
-      -webkit-transform: rotatex(-180deg);
-    }
-
-    .flip .card {
-      width: 100%;
-      height: 100%;
-      -webkit-transform-style: preserve-3d;
-      -webkit-transition: 0.5s;
-    }
-
-    .flip .card .face {
-      border: #eee solid 1px;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      padding: 10px;
-      -webkit-backface-visibility: hidden;
-    }
-
-    .flip .card .front {
-      position: absolute;
-      z-index: 1;
-      cursor: pointer;
-      font-size: 70px !important;
-    }
-
-    .flip .card .back {
-      -webkit-transform: rotatex(-180deg);
-      color: black;
-      cursor: pointer;
-      font-size: 50px !important;
-    }
-
-    .flip .card h1 {
-      text-shadow: 1px 1px 0 #444;
-    }
-
-    .vertical-align {
-      position: relative;
-      top: 40%;
-      -webkit-transform: translateY(-40%);
-      -ms-transform: translateY(-40%);
-      transform: translateY(-40%);
-    }
-    .mw500 {
-      max-width: 600px;
-    }
-  </style>
-
+<div class="w3-container header-container">
   <!-- #コントロールボタン -->
   <!-- 入力Form -->
-  <div class="w3-row mw500">
-    <div class="w3-col l3 m10 s10">
-      <input type="range" min="1" max="{{ listQuestion.length }}" ng-model="currentPage" />
+  <div class="w3-row play-card">
+    <div class="w3-col l6 m10 s10">
+      <input type="range" min="1" max="{{ listQuiz.length }}" ng-model="curQuiz" />
     </div>
-    <div class="w3-col l3 m2 s2 w3-container">{{ currentPage }}/{{ listQuestion.length }}</div>
+    <div class="w3-col l3 m2 s2 w3-container">{{ curQuiz }}/{{ listQuiz.length }}</div>
   </div>
-  
-  <!-- <input type="number" ng-model="currentPage"> -->
+
+  <!-- <input type="number" ng-model="curQuiz"> -->
   <hr>
-  <div class="flip h400 mw500" data-ng-repeat="card in listQuestion track by $index" ng-if="($index + 1) == currentPage">
-    <div class="card" ng-class="{'flipped':isFlipped[currentPage]}" ng-click="flipped()">
+  <div class="flip play-card play-card-height" data-ng-repeat="quiz in listQuiz track by $index" ng-if="($index + 1) == curQuiz">
+    <div class="card" ng-class="{'flipped':isFlipped[curQuiz]}" ng-click="flipped()">
       <div class="w3-card-4 face front w3-center">
-        <h1 class="w3-text-orange vertical-align" style="font-size: 70px">
-          <b>{{ card.front }}</b>
+        <div class="button-header">
+          <button class="w3-btn w3-white w3-text-red w3-right" ng-if="quiz.memorize > 0" ng-click="rememberIt(quiz, 0)">
+            <i class="fas fa-star"></i>
+          </button>
+          <button class="w3-btn w3-white w3-text-red w3-right" ng-if="quiz.memorize == 0" ng-click="rememberIt(quiz, 1)">
+            <i class="far fa-star"></i>
+          </button>
+          <button class="w3-btn w3-white w3-text-orange w3-right" ng-click="sayIt(quiz.word.front)">
+            <i class="fas fa-volume-up"></i>
+          </button>
+        </div>
+
+        <h1 class="w3-text-orange vertical-align" style="font-size: 50px">
+          <b>{{ quiz.word.front }}</b>
         </h1>
       </div>
       <div class="w3-card-4 face back w3-center">
-        <h1 class="w3-text-red vertical-align" style="font-size: 50px">
-          <b>{{ card.back }}</b>
+        <div class="button-header" ng-init="remember = quiz.memorize > 0 ? 0 : 1">
+          <button class="w3-btn w3-white w3-text-red w3-right" ng-if="remember > 0" ng-click="rememberIt(quiz, 0)">
+            <i class="fas fa-star"></i>
+          </button>
+          <button class="w3-btn w3-white w3-text-red w3-right" ng-if="remember == 0" ng-click="rememberIt(quiz, 1)">
+            <i class="far fa-star"></i>
+          </button>
+          <button class="w3-btn w3-white w3-text-orange w3-right" ng-click="sayIt(quiz.word.front)">
+            <i class="fas fa-volume-up"></i>
+          </button>
+        </div>
+        <h1 class="w3-text-red vertical-align" style="font-size: 30px">
+          <b style="white-space:pre-wrap;" >{{ quiz.word.back }}</b>
         </h1>
       </div>
     </div>
   </div>
   <!-- #入力Form -->
 </div>
-<footer class="w3-container h100 w3-center mw500" style="margin-top:35px">
-  <button class="w3-button w3-circle w3-blue w3-left" ng-click="prev()" ng-disabled="currentPage == 1">
+<footer class="w3-container w3-center play-card" style="margin-top:35px">
+  <button class="w3-button w3-circle w3-red w3-left" ng-click="prev()" ng-disabled="curQuiz == 1">
     <i class="fas fa-caret-left"></i>
   </button>
-  <button class="w3-button w3-orange w3-center" ng-click="sayIt()">
-    <i class="fas fa-volume-up"></i>
-  </button>
-  <button class="w3-button w3-orange w3-center" ng-click="sayIt()">
-    <i class="fas fa-thumbs-up"></i>
-  </button>
-  <button class="w3-button w3-orange w3-center" ng-click="sayIt()">
-    <i class="fas fa-thumbs-down"></i>
-  </button>
-  <button class="w3-button w3-circle w3-red w3-right" ng-click="next()" ng-disabled="currentPage == listQuestion.length">
+  <div ng-include="buttons-quiz"></div>
+  <button class="w3-button w3-circle w3-red w3-right" ng-click="next()" ng-disabled="curQuiz == listQuiz.length">
     <i class="fas fa-caret-right"></i>
   </button>
 </footer>

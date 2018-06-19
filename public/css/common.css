@@ -1,0 +1,35 @@
+@media (max-width: 400px) {
+    .header-container {
+        margin-top:100px;
+    }
+    .play-card-height {
+        height: 300px;
+    }
+    
+  }
+  @media (min-width: 401px) and (max-width: 800px) {
+    .header-container {
+        margin-top:100px;
+    }
+    .play-card-height {
+        height: 400px;
+    }
+  }
+  @media (min-width: 801px) {
+    .header-container {
+        margin-top:30px;
+    }
+    .play-card-height {
+        height: 500px;
+    }
+  }
+/* play screen */
+.play-card{max-width:800px}
+.flip{-webkit-perspective:800;position:relative;z-index:1px}
+.flip .card.flipped{-webkit-transform:rotatex(-180deg)}
+.flip .card{width:100%;height:100%;-webkit-transform-style:preserve-3d;-webkit-transition:.5s}
+.flip .card .face{border:#eee solid 1px;width:100%;height:100%;position:absolute;padding:10px;-webkit-backface-visibility:hidden}
+.flip .card .front{position:absolute;z-index:1;cursor:pointer}
+.flip .card .back{-webkit-transform:rotatex(-180deg);color:#000;cursor:pointer}
+.flip .card h1{text-shadow:1px 1px 0 #444}
+.vertical-align{position:relative;top:40%;-webkit-transform:translateY(-40%);-ms-transform:translateY(-40%);transform:translateY(-40%)}

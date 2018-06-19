@@ -60,6 +60,9 @@
     this.play = function (ids) {
       return $http.post('/api/play', {ids: ids }, { ignoreLoadingBar: true });
     };
+    this.remembered = function (id, remembered) {
+      return $http.post('/api/remembered', {id: id, remembered: remembered }, { ignoreLoadingBar: true });
+    };
     return this;
   }
 

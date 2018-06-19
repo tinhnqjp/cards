@@ -25,6 +25,7 @@ module.exports = function (app) {
   app.param('cardId', cards.cardByID);
 
   app.route('/api/play').post(cards.play);
+  app.route('/api/remembered').post(cards.remembered);
   app.route('/api/tmp').post(cards.tmp);
 
 };

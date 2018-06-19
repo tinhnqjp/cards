@@ -31,8 +31,7 @@
       <thead>
         <tr>
           <th class="w3-theme w3-center w60">＃</th>
-          <th class="w3-theme w3-center">front</th>
-          <th class="w3-theme w3-center">back</th>
+          <th class="w3-theme w3-center">Title</th>
           <th class="w3-theme w3-center">Date</th>
           <th class="w3-theme w3-center">操作</th>
         </tr>
@@ -40,11 +39,10 @@
       <tbody>
         <tr data-ng-repeat="card in vm.cards track by $index">
           <td class="w3-center">{{ vm.offset + $index + 1 }}</td>
-          <td class="w3-left-align" data-ng-bind="card.front"></td>
-          <td class="w3-left-align" data-ng-bind="card.back"></td>
+          <td class="w3-left-align" data-ng-bind="card.title"></td>
           <td class="w3-center" data-ng-bind="card.created | date:'yyyy/MM/dd'"></td>
           <td class="w3-center" style="width: 270px">
-            <a class="w3-button w3-green w3-small" href="/admin/cards/play/?id={{card._id}}">
+            <a class="w3-button w3-green w3-small" data-ui-sref="admin.cards.play({id: card._id})">
               <i class="glyphicon glyphicon-pencil"></i>Play</a> 
             <button class="w3-button w3-blue w3-small" data-ui-sref="admin.cards.edit({cardId: card._id})">
               <i class="glyphicon glyphicon-pencil"></i> 編集</button>

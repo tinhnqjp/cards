@@ -9,7 +9,6 @@
   function PlayAdminController($scope, CardsService, CardsApi, $location) {
     var vm = this;
     vm.form = {};
-
     $scope.initData();
   }
 }());

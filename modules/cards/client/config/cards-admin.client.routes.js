@@ -49,11 +49,9 @@
         }
       }).state('admin.cards.play', {
         url: '/play?id',
-        reloadOnSearch: true,
         templateUrl: '/modules/cards/client/views/admin/play-card.client.view.html',
         controller: 'PlayAdminController',
-        controllerAs: 'vm',
-        
+        controllerAs: 'vm'
       });
   }
 
