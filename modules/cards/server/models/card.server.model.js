@@ -10,20 +10,10 @@ var mongoose = require('mongoose'),
   chalk = require('chalk');
 
 var CardSchema = new Schema({
-  created: {
-    type: Date,
-    default: Date.now
-  },
-  title: {
-    type: String,
-    default: '',
-    trim: true
-  },
+  created: { type: Date, default: Date.now },
+  title: { type: String, default: '', trim: true },
   words: [{ type: Schema.ObjectId, ref: 'Word' }],
-  user: {
-    type: Schema.ObjectId,
-    ref: 'User'
-  }
+  user: { type: Schema.ObjectId, ref: 'User' }
 });
 
 mongoose.model('Card', CardSchema);

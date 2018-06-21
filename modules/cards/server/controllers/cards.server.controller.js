@@ -15,32 +15,51 @@ var path = require('path'),
  * Create an card
  */
 exports.create = function (req, res) {
-  var arrWords;
-  var content = req.body.content;
-  // console.log(content);
-  if (content) {
-    arrWords = content.split("\n\n");
-    var card = new Card();
-    card.title = req.body.title;
-    arrWords = content.split("\n\n");
-    arrWords.forEach(word => {
-      var strings = word.split("\t");
-      var obj = new Word();
-      obj.front = strings[0];
-      obj.back = strings[1];
-      obj.card = card;
-      obj.user = req.user;
-      obj.save();
-      card.words.push(obj);
+
+  var card = new Card();
+  card.title = req.body.title;
+
+  var words = req.body.words;
+  // card.words = req.body.words;
+  var wordIds = [];
+  new Promise(function (resolve, reject) {
+    words.forEach(function (word) {
+      var objWord = new Word();
+      if (word.back) {
+        var strings = word.back.split("\n");
+        if (strings.length > 0) {
+          objWord.back_line1 = strings[0] ? strings[0] : '';
+          objWord.back_line2 = strings[1] ? strings[1] : '';
+          objWord.back_line3 = strings[2] ? strings[2] : '';
+        }
+      }
+      objWord.index = word.index;
+      objWord.front = word.front;
+      objWord.back = word.back;
+      objWord.card = card._id;
+      objWord.user = req.user;
+      objWord.save(function (err) {
+        if (err) {
+          reject(err);
+        }
+      });
+      wordIds.push(new mongoose.Types.ObjectId(objWord._id));
     });
-    card.save();
-    res.json(card);
-  } else {
-    return res.status(422).send({
-      message: 'content null'
+    resolve(wordIds);
+  })
+    .then(function (wordIds) {
+      card.words = wordIds;
+      return card.save();
+    })
+    .then(function () {
+      res.json(card);
+    })
+    .catch(function (error) {
+      console.log('**ERROR**', error);
+      return res.status(422).send({
+        message: errorHandler.getErrorMessage(error)
+      });
     });
-  }
-  console.log('​exports.create -> arrWords', arrWords);
 };
 
 /**
@@ -62,19 +81,51 @@ exports.read = function (req, res) {
  */
 exports.update = function (req, res) {
   var card = req.card;
-  console.log(req.body);
-  // card.title = req.body.title;
-  // card.content = req.body.content;
-
-  card.save(function (err) {
-    if (err) {
-      return res.status(422).send({
-        message: errorHandler.getErrorMessage(err)
+  card.title = req.body.title;
+  card.words = req.body.words;
+  var wordIds = [];
+  new Promise(function (resolve, reject) {
+    card.words.forEach(function (word) {
+      if (word.back) {
+        var strings = word.back.split("\n");
+        if (strings.length > 0) {
+          word.back_line1 = strings[0] ? strings[0] : '';
+          word.back_line2 = strings[1] ? strings[1] : '';
+          word.back_line3 = strings[2] ? strings[2] : '';
+        }
+      }
+      word.card = card._id;
+      word.user = req.user;
+      Word.update({ _id: word._id }, word, { upsert: true, setDefaultsOnInsert: true }, function (err) {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
       });
-    } else {
+      wordIds.push(new mongoose.Types.ObjectId(word._id));
+    });
+    resolve(wordIds);
+  })
+    .then(function (wordIds) {
+      var condition = { $and: [{ 'card': card._id }, { '_id': { $nin: wordIds } }] };
+      return Word.remove(condition).exec();
+    })
+    .then(function () {
+      var condition = { $and: [{ 'card': card._id }, { '_id': { $nin: wordIds } }] };
+      return Memorize.remove(condition).exec();
+    })
+    .then(function () {
+      return card.save();
+    })
+    .then(function () {
       res.json(card);
-    }
-  });
+    })
+    .catch(function (error) {
+      console.log('**ERROR**', error);
+      return res.status(422).send({
+        message: errorHandler.getErrorMessage(error)
+      });
+    });
 };
 
 /**
@@ -89,6 +140,10 @@ exports.delete = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
+      Word.remove({ 'card': card._id }).exec(function (err, result) {
+        console.log(err, result);
+      });
+
       res.json(card);
     }
   });
@@ -165,19 +220,19 @@ exports.cardByID = function (req, res, next, id) {
   }
 
   Card.findById(id)
-  .populate('words')
-  .populate('user', 'displayName')
-  .exec(function (err, card) {
-    if (err) {
-      return next(err);
-    } else if (!card) {
-      return res.status(404).send({
-        message: 'No card with that identifier has been found'
-      });
-    }
-    req.card = card;
-    next();
-  });
+    .populate('words')
+    .populate('user', 'displayName')
+    .exec(function (err, card) {
+      if (err) {
+        return next(err);
+      } else if (!card) {
+        return res.status(404).send({
+          message: 'No card with that identifier has been found'
+        });
+      }
+      req.card = card;
+      next();
+    });
 };
 
 exports.play = function (req, res) {
@@ -220,6 +275,11 @@ exports.play = function (req, res) {
             memorize.user = req.user;
             memorize.card = cardIds;
             memorize.words = words;
+            memorize.current_quiz00 = 1;
+            memorize.current_quiz10 = 1;
+            memorize.current_quiz01 = 1;
+            memorize.current_quiz11 = 1;
+
             return memorize.save();
           })
           .then(function (memorize) {
@@ -238,7 +298,6 @@ exports.play = function (req, res) {
 exports.remembered = function (req, res) {
   var id = req.body.id || null;
   var remembered = req.body.remembered || 0;
-  console.log(id, remembered);
   if (!id) {
     return res.status(422).send({
       message: 'id null'
@@ -250,7 +309,7 @@ exports.remembered = function (req, res) {
       { 'words.word': id }]
   };
   Memorize.find(condition)
-    .sort('-created').exec(function (error, result) {
+    .sort('-updated').exec(function (error, result) {
       if (error) {
         return res.status(422).send({
           message: error
@@ -264,6 +323,7 @@ exports.remembered = function (req, res) {
               item.memorize = remembered;
             }
           });
+          memorize.updated = Date.now();
           memorize.save();
         });
         res.json(result);
@@ -287,7 +347,7 @@ exports.tmp = function (req, res) {
       { 'words.word': id }]
   };
   Memorize.find(condition)
-    .sort('-created').exec(function (error, result) {
+    .sort('-updated').exec(function (error, result) {
       if (error) {
         return res.status(422).send({
           message: error
@@ -317,10 +377,14 @@ function getMemorizes(user, cardIds) {
       { 'card': cardIds }]
     };
     Memorize.findOne(condition)
-      .sort('-created').populate('words.word').exec(function (error, result) {
+      .sort('-updated').populate('words.word').exec(function (error, result) {
         if (error) {
           reject(error);
         } else {
+          if (result) {
+            result.updated = Date.now();
+            result.save();
+          }
           resolve(result);
         }
       });

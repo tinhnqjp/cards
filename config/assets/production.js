@@ -1,6 +1,6 @@
 'use strict';
 
-/* eslint comma-dangle:[0, "only-multiline"] */
+/* eslint comma-dangle:[0, "always-multiline"] */
 
 module.exports = {
   client: {

@@ -63,6 +63,12 @@
     this.remembered = function (id, remembered) {
       return $http.post('/api/remembered', {id: id, remembered: remembered }, { ignoreLoadingBar: true });
     };
+    this.latest = function (input) {
+      return $http.post('/api/latest', input, { ignoreLoadingBar: true });
+    };
+    this.current = function (id, random, filter, quiz) {
+      return $http.post('/api/current', {id: id, random: random, filter: filter, quiz: quiz }, { ignoreLoadingBar: true });
+    };
     return this;
   }
 

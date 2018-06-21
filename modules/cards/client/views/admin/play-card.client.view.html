@@ -1,11 +1,11 @@
-<div class="w3-container header-container">
+<div class="w3-container header-container" ng-if="curQuiz <= listQuiz.length">
   <!-- #コントロールボタン -->
   <!-- 入力Form -->
   <div class="w3-row play-card">
     <div class="w3-col l6 m10 s10">
       <input type="range" min="1" max="{{ listQuiz.length }}" ng-model="curQuiz" />
     </div>
-    <div class="w3-col l3 m2 s2 w3-container">{{ curQuiz }}/{{ listQuiz.length }}</div>
+    <div class="w3-col l3 m2 s2 w3-right-align">{{ curQuiz }}/{{ listQuiz.length }}</div>
   </div>
 
   <!-- <input type="number" ng-model="curQuiz"> -->
@@ -14,47 +14,70 @@
     <div class="card" ng-class="{'flipped':isFlipped[curQuiz]}" ng-click="flipped()">
       <div class="w3-card-4 face front w3-center">
         <div class="button-header">
-          <button class="w3-btn w3-white w3-text-red w3-right" ng-if="quiz.memorize > 0" ng-click="rememberIt(quiz, 0)">
+          <button class="w3-button w3-text-red w3-right" ng-if="quiz.memorize > 0" ng-click="rememberIt(quiz, 0)">
             <i class="fas fa-star"></i>
           </button>
-          <button class="w3-btn w3-white w3-text-red w3-right" ng-if="quiz.memorize == 0" ng-click="rememberIt(quiz, 1)">
+          <button class="w3-button w3-text-red w3-right" ng-if="quiz.memorize == 0" ng-click="rememberIt(quiz, 1)">
             <i class="far fa-star"></i>
           </button>
-          <button class="w3-btn w3-white w3-text-orange w3-right" ng-click="sayIt(quiz.word.front)">
+          <button class="w3-button w3-text-orange w3-right" ng-click="sayIt(quiz.word.front)">
             <i class="fas fa-volume-up"></i>
           </button>
+        </div>
+        <div class="w3-row w3-text-red vertical-align">
+          <span class="w3-col s12 card-text">{{ quiz.word.front }}</span>
         </div>
 
-        <h1 class="w3-text-orange vertical-align" style="font-size: 50px">
-          <b>{{ quiz.word.front }}</b>
-        </h1>
       </div>
       <div class="w3-card-4 face back w3-center">
-        <div class="button-header" ng-init="remember = quiz.memorize > 0 ? 0 : 1">
-          <button class="w3-btn w3-white w3-text-red w3-right" ng-if="remember > 0" ng-click="rememberIt(quiz, 0)">
+        <div class="button-header">
+          <button class="w3-button w3-text-red w3-right" ng-if="quiz.memorize > 0" ng-click="rememberIt(quiz, 0)">
             <i class="fas fa-star"></i>
           </button>
-          <button class="w3-btn w3-white w3-text-red w3-right" ng-if="remember == 0" ng-click="rememberIt(quiz, 1)">
+          <button class="w3-button w3-text-red w3-right" ng-if="quiz.memorize == 0" ng-click="rememberIt(quiz, 1)">
             <i class="far fa-star"></i>
           </button>
-          <button class="w3-btn w3-white w3-text-orange w3-right" ng-click="sayIt(quiz.word.front)">
+          <button class="w3-button w3-text-orange w3-right" ng-click="sayIt(quiz.word.front)">
             <i class="fas fa-volume-up"></i>
           </button>
         </div>
-        <h1 class="w3-text-red vertical-align" style="font-size: 30px">
-          <b style="white-space:pre-wrap;" >{{ quiz.word.back }}</b>
-        </h1>
+        <div class="w3-row w3-text-blue-gray vertical-align">
+          <span class="w3-col s12 card-text">{{ quiz.word.back }}</span>
+        </div>
       </div>
     </div>
   </div>
   <!-- #入力Form -->
 </div>
-<footer class="w3-container w3-center play-card" style="margin-top:35px">
-  <button class="w3-button w3-circle w3-red w3-left" ng-click="prev()" ng-disabled="curQuiz == 1">
+<footer class="w3-container w3-center play-card" style="margin-top:35px" ng-if="curQuiz <= listQuiz.length">
+  <button class="w3-button w3-circle w3-theme-l1 w3-left" ng-click="prev()" ng-disabled="curQuiz == 1">
     <i class="fas fa-caret-left"></i>
   </button>
-  <div ng-include="buttons-quiz"></div>
-  <button class="w3-button w3-circle w3-red w3-right" ng-click="next()" ng-disabled="curQuiz == listQuiz.length">
+
+  <button class="w3-button w3-yellow w3-border w3-center" ng-if="hideBtnRandom" ng-click="random(0)">
+    <i class="fas fa-random"></i>
+  </button>
+  <button class="w3-button w3-white w3-border w3-center" ng-if="!hideBtnRandom" ng-click="random(1)">
+    <i class="fas fa-random"></i>
+  </button>
+  <button class="w3-button w3-yellow w3-text-red w3-border w3-center" ng-if="hideBtnFilter" ng-click="filter(0)">
+    <i class="fas fa-star"></i>
+  </button>
+  <button class="w3-button w3-white w3-text-red w3-border w3-center" ng-if="!hideBtnFilter" ng-click="filter(1)">
+    <i class="far fa-star"></i>
+  </button>
+
+  <button class="w3-button w3-circle w3-theme-l1 w3-right" ng-click="next()" ng-disabled="curQuiz == listQuiz.length + 1">
     <i class="fas fa-caret-right"></i>
   </button>
 </footer>
+
+<!-- show result -->
+<div class="w3-container header-container w3-center" ng-if="curQuiz > listQuiz.length">
+  <h1>Nice work!</h1>
+  <h3>You just studied {{ listQuiz.length }} terms! </h3>
+  <div class="w3-bar">
+    <button class="w3-button w3-green" >Study all {{ listQuizTmp.length }} terms</button>
+    <button class="w3-button w3-theme-action" >Study all {{ termRemember }} terms</button>
+  </div>
+</div>

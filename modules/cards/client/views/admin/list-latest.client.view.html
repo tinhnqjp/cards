@@ -1,0 +1,46 @@
+﻿<div class="w3-container header-container">
+  <h3>LATEST ACTIVITY</h3>
+  <a class="w3-button w3-green pull-right" title="Create Study" id="btnAdd" data-ui-sref="admin.cards.create">
+    <span class="glyphicon glyphicon-plus"></span>
+  </a>
+  <ol class="breadcrumb">
+    <li class="active">Latest Activity</li>
+  </ol>
+  <hr>
+  <form name="vm.form.searchForm" title="Search..." ng-submit="vm.search()" autocomplete="on" novalidate>
+    <div class="w3-row">
+      <div class="w3-col s8 m4 l3">
+        <input type="text" class="w3-input w3-border" id="keyword" ng-model="vm.keyword" placeholder="キーワード" autofocus>
+      </div>
+      <div class="w3-col s2 m1 l1">
+        <button type="submit" class="w3-button w3-teal button-search">
+          <span ng-if="!vm.busyLoad" class="glyphicon glyphicon-search"></span>
+          <span ng-if="vm.busyLoad" class="fa fa-spinner fa-spin"></span>
+        </button>
+      </div>
+    </div>
+    <hr>
+  </form>
+  <div class="list-latest">
+    <!-- card -->
+    <div class="w3-card-2 w3-margin-bottom w3-hover-text-theme pointer" data-ui-sref="admin.cards.play({id: item.param})" data-ng-repeat="item in vm.latests | filter:vm.keyword">
+      <header class="w3-row w3-container w3-small w3-theme">
+        <div class="w3-col l4 m8 s8">
+          <span>#{{ $index + 1 }}</span> |
+          <span data-ng-bind="item.words"></span> term |
+          <span class="w3-tag w3-theme-d5">
+            <span data-ng-bind="item.memorize"></span>
+            <i class="fas fa-star"></i>
+          </span>
+        </div>
+        <div class="w3-col l4 m4 s4">
+          <span class="w3-right" data-ng-bind="item.created | formatdate"></span>
+        </div>
+      </header>
+      <div class="w3-container">
+        <h3 data-ng-bind-html="item.title | highlight:vm.keyword"></h3>
+      </div>
+    </div>
+    <!-- card -->
+  </div>
+</div>

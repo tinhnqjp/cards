@@ -6,7 +6,8 @@
   var service = {
     applicationEnvironment: window.env,
     applicationModuleName: applicationModuleName,
-    applicationModuleVendorDependencies: ['ngResource', 'ngAnimate', 'ngMessages', 'ui.router', 'ui.bootstrap', 'ngFileUpload', 'ui-notification', 'ngDialog'],
+    applicationModuleVendorDependencies: ['ngResource', 'ngAnimate', 'ngMessages', 'ui.router',
+      'ui.bootstrap', 'ngFileUpload', 'ui-notification', 'ngDialog'],
     registerModule: registerModule
   };
 
@@ -32,5 +33,10 @@
       positionX: 'right',
       positionY: 'bottom'
     });
+  });
+
+  var underscore = angular.module('underscore', []);
+  underscore.factory('_', function () {
+    return window._; //Underscore should be loaded on the page
   });
 }(window));

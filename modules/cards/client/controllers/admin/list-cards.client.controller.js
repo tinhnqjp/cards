@@ -11,7 +11,7 @@
   function CardsAdminListController(CardsService, CardsApi, $scope, $state, $window, Notification) {
     var vm = this;
     vm.currentPage = 1;
-    vm.pageSize = 15;
+    vm.pageSize = 50;
     vm.offset;
     vm.cards = [];
     initData();
@@ -19,19 +19,15 @@
     function initData() {
       vm.offset = (vm.currentPage - 1) * vm.pageSize;
       var input = { page: vm.currentPage, limit: vm.pageSize, keyword: vm.keyword };
-      console.log(input);
       CardsService.get(input, function (output) {
         vm.cards = output.laws;
         vm.totalItems = output.total;
         vm.currentPage = output.current;
-
       });
-
     }
 
     vm.pageChanged = function () {
-      $state.transitionTo('admin.cards.play', { id: "5b23951384ab4653f841b49a" }, { notify: false });
-      // $state.go('admin.cards.play({id: "5b23951384ab4653f841b49a"})');
+      // $state.transitionTo('admin.cards.play', { id: "5b23951384ab4653f841b49a" }, { notify: false });
       initData();
     };
 
@@ -50,27 +46,9 @@
         card.$remove(function () {
           vm.busy = false;
           initData();
-          Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> データの削除が完了しました。' });
+          // Notification.error({ message: 'Card deleted successfully!', title: '<i class="glyphicon glyphicon-remove"></i> Article save error!' });
+          // Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Card deleted successfully!' });
         });
-      });
-    };
-
-    vm.copy = function (_card) {
-      $scope.handleShowConfirm({
-        message: 'Are you sure you want to copy?'
-      }, function () {
-        vm.busy = true;
-        CardsApi.copy(_card._id)
-          .then(function (res) {
-            vm.busy = false;
-            initData();
-            Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> データのコピーが完了しました。' });
-          })
-          .catch(function (res) {
-            console.log(res);
-            vm.busy = false;
-            Notification.error({ message: '<i class="glyphicon glyphicon-ok"></i> データのコピーが失敗しました。' });
-          });
       });
     };
   }

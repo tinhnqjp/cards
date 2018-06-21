@@ -1,18 +1,33 @@
-<div class="w3-container" id="services" style="margin-top:75px">
+<div class="w3-container header-container">
   <h3>CREATE/EDIT</h3>
+  <ol class="breadcrumb">
+    <li>List</li>
+    <li class="active">Create</li>
+  </ol>
   <hr>
   <!-- #コントロールボタン -->
-  <button class="w3-button w3-green pull-right" ng-click="vm.openModal()">
-    <span class="glyphicon glyphicon-floppy-save"></span> Import</a>
-  </button>
+  <div class="w3-row">
+    <a class="w3-col l2 m5 s12 w3-button w3-green w3-left" data-ui-sref="admin.cards.play({id: vm.card._id})">
+      <i class="fas fa-play"></i> Flash Card
+    </a>
+    <button class="w3-col l3 m6 s12 w3-button w3-red w3-right" type="button" ng-click="vm.openModal()">
+      <i class="fas fa-file-excel"></i> Import from excel...</a>
+    </button>
+
+  </div>
+
   <br>
   <!-- 入力Form -->
   <form name="vm.form.cardForm" ng-submit="vm.save(vm.form.cardForm.$valid)" novalidate>
-    <div class="w3-section">
+    <div class="w3-section form-group" show-errors>
       <label class="w3-text-black">
         <b>Card title</b>
       </label>
-      <input type="text" ng-model="vm.card.title" id="title" class="w3-input w3-border" required placeholder="Card Name" autofocus>
+      <input type="text" name="title" ng-model="vm.card.title" id="title" class="w3-input w3-border" placeholder="Card Name" required
+        autofocus>
+      <div ng-messages="vm.form.cardForm.title.$error" role="alert">
+        <p class="help-block error-text" ng-message="required">Title is required.</p>
+      </div>
     </div>
     <div class="w3-section">
       <label class="w3-text-black">
@@ -29,11 +44,12 @@
         </thead>
         <tbody>
           <tr data-ng-repeat="word in vm.card.words track by $index" ng-mouseenter="options=true" ng-mouseleave="options=false">
-            <td class="w3-center" style="width: 100px;">
-              <span ng-hide="options">{{ $index + 1 }}</span>
-              <button ng-show="options" class="w3-button w3-red w3-small" ng-click="vm.removeWord(word)">
+            <td class="w3-center" style="width: 100px;" ng-init="word.index = $index + 1">
+              <span ng-hide="options">{{ word.index }}</span>
+              <button type="button" ng-show="options" class="w3-button w3-red w3-small" ng-click="vm.removeWord(word)">
                 <i class="glyphicon glyphicon-trash"></i>
               </button>
+              <input name="front" type="text" ng-model="word.index" class="w3-input w3-border w3-hide">
             </td>
             <td>
               <textarea name="front" type="text" ng-model="word.front" class="w3-input w3-border"></textarea>
@@ -44,19 +60,21 @@
           </tr>
           <tr>
             <td class="w3-center" colspan="3">
-              <button type="button" class="w3-btn w3-white w3-border" ng-click="vm.pushWord()">
-                  <i class="fas fa-plus"></i> Add word
+              <button type="button" class="w3-button w3-white w3-border" ng-click="vm.pushWord()">
+                <i class="fas fa-plus"></i> Add word
               </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="w3-section">
-      <button type="submit" class="w3-button w3-green pull-right mg15l" id="btn_save_add">
-        <span class="glyphicon glyphicon-floppy-save"></span> 保存</a>
+    <div class="w3-section pull-right">
+      <a data-ui-sref="admin.cards.list" class="w3-button w3-gray">
+        <i class="fas fa-ban"> Cancel</i>
+      </a>
+      <button type="submit" class="w3-button w3-green">
+        <i class="fas fa-check"></i> Save</a>
       </button>
-      <a data-ui-sref="admin.cards.list" class="w3-button w3-orange pull-right mg15r">キャンセル</a>
     </div>
   </form>
   <!-- #入力Form -->
@@ -65,13 +83,14 @@
 <script type="text/ng-template" id="myModalContent.html">
   <div class="modal-header">
       <h4 class="modal-title">IMPORT</h4>
+      <span>Import your data. Copy and Paste your data here (from Word, Excel, Google Docs, etc.)</span>
   </div>
   <div class="modal-body text-left" id="modal-body">
       <textarea name="content" ng-model="$ctrl.content" id="back" class="w3-input w3-border" cols="30" rows="15" placeholder="content"></textarea>
   </div>
   <div class="modal-footer">
-      <button class="w3-button w3-gray" type="button" ng-click="$ctrl.cancel()">閉じる</button>
-      <button class="w3-button w3-green" type="button" ng-click="$ctrl.ok($ctrl.content)">決定</button>
+      <button class="w3-button w3-gray" type="button" ng-click="$ctrl.cancel()"><i class="fas fa-ban"></i></button> 
+      <button class="w3-button w3-green" type="button" ng-click="$ctrl.ok($ctrl.content)"><i class="fas fa-check"></i></button>
   </div>
 </script>
 <!-- #modal template -->

@@ -23,6 +23,15 @@
           roles: ['admin']
         }
       })
+      .state('admin.latest', {
+        url: '/latest',
+        templateUrl: '/modules/cards/client/views/admin/list-latest.client.view.html',
+        controller: 'LatestAdminListController',
+        controllerAs: 'vm',
+        data: {
+          roles: ['admin']
+        }
+      })
       .state('admin.cards.create', {
         url: '/create',
         templateUrl: '/modules/cards/client/views/admin/form-card.client.view.html',

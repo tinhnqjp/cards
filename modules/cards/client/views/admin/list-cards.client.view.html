@@ -1,16 +1,13 @@
-﻿<div class="w3-container">
-  <h3>物件データ管理</h3>
-  <a class="w3-button w3-green pull-right" id="btnAdd" data-ui-sref="admin.cards.create">
-    <span class="glyphicon glyphicon-plus"></span> create
-  </a>
-  <a class="w3-button w3-blue pull-right mg15r" data-ui-sref="admin.cards.play">
-    <i class="glyphicon glyphicon-allow-down"></i> Play
+﻿<div class="w3-container header-container">
+  <h3>LIST STUDY</h3>
+  <a class="w3-button w3-green pull-right" title="Create Study" id="btnAdd" data-ui-sref="admin.cards.create">
+    <span class="glyphicon glyphicon-plus"></span>
   </a>
   <ol class="breadcrumb">
-    <li class="active">一覧</li>
+    <li class="active">List Study</li>
   </ol>
   <hr>
-  <form name="vm.form.searchForm" ng-submit="vm.search()" autocomplete="on" novalidate>
+  <form name="vm.form.searchForm" title="Search..." ng-submit="vm.search()" autocomplete="on" novalidate>
     <div class="w3-row">
       <div class="w3-col s8 m4 l3">
         <input type="text" class="w3-input w3-border" id="keyword" ng-model="vm.keyword" placeholder="キーワード" autofocus>
@@ -18,8 +15,7 @@
       <div class="w3-col s2 m1 l1">
         <button type="submit" class="w3-button w3-teal button-search">
           <span ng-if="!vm.busyLoad" class="glyphicon glyphicon-search"></span>
-          <span ng-if="vm.busyLoad" class="fa fa-spinner fa-spin"></span>
-          探索</button>
+          <span ng-if="vm.busyLoad" class="fa fa-spinner fa-spin"></span></button>
       </div>
     </div>
     <hr>
@@ -32,24 +28,29 @@
         <tr>
           <th class="w3-theme w3-center w60">＃</th>
           <th class="w3-theme w3-center">Title</th>
-          <th class="w3-theme w3-center">Date</th>
-          <th class="w3-theme w3-center">操作</th>
+          <th class="w3-theme w3-center">Term</th>
+          <th class="w3-theme w3-center">Created</th>
+          <th class="w3-theme w3-center"></th>
         </tr>
       </thead>
       <tbody>
-        <tr data-ng-repeat="card in vm.cards track by $index">
-          <td class="w3-center">{{ vm.offset + $index + 1 }}</td>
-          <td class="w3-left-align" data-ng-bind="card.title"></td>
+        <tr data-ng-repeat="card in vm.cards | filter:vm.keyword" ng-mouseenter="options=true" ng-mouseleave="options=false">
+          <td class="w3-center" style="width: 100px;">
+            <span ng-hide="options">{{ vm.offset + $index + 1 }}</span>
+            <button title="Remove" ng-show="options" class="w3-button w3-red w3-small" ng-click="vm.remove(card)">
+              <i class="glyphicon glyphicon-trash"></i>
+            </button>
+          </td>
+          <td class="w3-left-align">
+              <a data-ui-sref="admin.cards.edit({cardId: card._id})" data-ng-bind="card.title"></a>
+          </td>
+          <td class="w3-center" data-ng-bind="card.words.length"></td>
           <td class="w3-center" data-ng-bind="card.created | date:'yyyy/MM/dd'"></td>
-          <td class="w3-center" style="width: 270px">
-            <a class="w3-button w3-green w3-small" data-ui-sref="admin.cards.play({id: card._id})">
-              <i class="glyphicon glyphicon-pencil"></i>Play</a> 
-            <button class="w3-button w3-blue w3-small" data-ui-sref="admin.cards.edit({cardId: card._id})">
-              <i class="glyphicon glyphicon-pencil"></i> 編集</button>
-            <button class="w3-button w3-orange w3-small" ng-click="vm.copy(card)">
-              <i class="glyphicon glyphicon-copyright-mark"></i> コピー</button>
-            <button class="w3-button w3-red w3-small" ng-click="vm.remove(card)">
-              <i class="glyphicon glyphicon-trash"></i> 削除</button>
+          <td class="w3-center" style="width: 110px">
+            <a class="w3-button w3-green w3-small" title="Flash Card" data-ui-sref="admin.cards.play({id: card._id})">
+                <i class="fas fa-play"></i></a> 
+            <button class="w3-button w3-blue w3-small" title="Edit Study" data-ui-sref="admin.cards.edit({cardId: card._id})">
+              <i class="glyphicon glyphicon-pencil"></i></button>
           </td>
         </tr>
       </tbody>
@@ -58,7 +59,7 @@
 
   <div class="w3-center">
     <hr>
-    <ul uib-pagination total-items="vm.totalItems" items-per-page="vm.pageSize" previous-text="前" next-text="次" ng-model="vm.currentPage"
+    <ul uib-pagination total-items="vm.totalItems" items-per-page="vm.pageSize" previous-text="<" next-text=">" ng-model="vm.currentPage"
       ng-click="vm.pageChanged()"></ul>
   </div>
 </div>

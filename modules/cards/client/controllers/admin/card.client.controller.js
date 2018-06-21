@@ -16,15 +16,7 @@
     initData();
 
     function initData () {
-      if (!vm.card.words) {
-        vm.card.words = [];
-      }
-      for (var index = 1; index <= 5; index++) {
-        vm.card.words.push({
-          front: '',
-          back: ''
-        });
-      }
+      createEmptyWords();
     };
 
     vm.pushWord = function () {
@@ -49,20 +41,14 @@
         $scope.$broadcast('show-errors-check-validity', 'vm.form.cardForm');
         return false;
       }
-      for (var index = vm.card.words.length -1; index >= 0; index--) {
-        var word = vm.card.words[index];
-        if(!word.front && !word.back) {
-          vm.card.words.splice(index, 1);
-        }
-      }
-
+      spliceEmptyWords();
       // Create a new card, or update the current instance
       vm.card.createOrUpdate()
         .then(successCallback)
         .catch(errorCallback);
 
       function successCallback(res) {
-        // $state.go('admin.cards.list'); // should we send the User to the list or the updated Card's view?
+        $state.go('admin.cards.list'); // should we send the User to the list or the updated Card's view?
         Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Card saved successfully!' });
       }
 
@@ -70,7 +56,6 @@
         Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Card save error!' });
       }
     }
-
 
     vm.openModal = function () {
       // init modal
@@ -100,13 +85,39 @@
               front: arrString[0].trim(),
               back: arrString[1].trim()
             });
-            console.log(arrString);
+            // console.log(arrString);
           });
+
+          spliceEmptyWords();
         }
       });
 
-      console.log(vm.content);
+      // console.log(vm.content);
     };
+
+    
+    /** method private */
+    function spliceEmptyWords() {
+      for (var index = vm.card.words.length -1; index >= 0; index--) {
+        var word = vm.card.words[index];
+        if(!word.front && !word.back) {
+          vm.card.words.splice(index, 1);
+        }
+      }
+    }
+
+    function createEmptyWords () {
+      if (!vm.card.words || vm.card.words.length === 0) {
+        vm.card.words = [];
+        for (var index = 1; index <= 5; index++) {
+          vm.card.words.push({
+            front: '',
+            back: ''
+          });
+        }
+      }
+    };
+    /** method private */
 
   }
 

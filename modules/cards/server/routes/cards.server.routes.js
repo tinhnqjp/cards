@@ -4,7 +4,8 @@
  * Module dependencies
  */
 var cardsPolicy = require('../policies/cards.server.policy'),
-  cards = require('../controllers/cards.server.controller');
+  cards = require('../controllers/cards.server.controller'),
+  memorizes = require('../controllers/memorizes.server.controller');
 
 module.exports = function (app) {
   // Cards collection routes
@@ -28,4 +29,7 @@ module.exports = function (app) {
   app.route('/api/remembered').post(cards.remembered);
   app.route('/api/tmp').post(cards.tmp);
 
+  // memories
+  app.route('/api/latest').post(memorizes.latest);
+  app.route('/api/current').post(memorizes.current);
 };
