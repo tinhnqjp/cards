@@ -5,9 +5,11 @@
     .module('core')
     .controller('AppController', AppController);
 
-  AppController.$inject = ['$scope', 'CardsService', 'CardsApi', '$location', '$state', '$stateParams', 'ngDialog'];
+  AppController.$inject = ['$scope', 'CardsService', 'CardsApi',
+    '$location', '$state', '$stateParams', 'ngDialog', '$timeout', 'StorageService'];
 
-  function AppController($scope, CardsService, CardsApi, $location, $state, $stateParams, ngDialog) {
+  function AppController($scope, CardsService, CardsApi,
+    $location, $state, $stateParams, ngDialog, $timeout) {
     var vm = this;
     $scope.curQuiz;
     $scope.isFlipped = [];
@@ -20,10 +22,10 @@
 
     $scope.initData = function () {
       $scope.ids = $location.search().id;
-      // console.log($scope.ids);
       CardsApi.play($scope.ids).then(function (res) {
         $scope.memorize = res.data;
         var list = res.data.words.slice();
+        // sort init by index
         list.sort(function (a, b) {
           if (a.word.card === b.word.card) {
             return a.word.index - b.word.index;
@@ -36,24 +38,24 @@
         // reset
         $scope.curQuiz = getCurQuiz();
         $scope.hideBtnRandom = false;
+
+        if ($scope.curQuiz >= $scope.listQuiz.length) {
+          // result screen
+          resultScreen();
+        }
       });
 
-      if ($scope.curQuiz > $scope.listQuiz.length) {
-        var list = _.where($scope.listQuizTmp.slice(), { memorize: 1 });
-        $scope.termRemember = list.length;
-      }
     };
 
     $scope.termRemember = 0;
     $scope.next = function () {
-      console.log($scope.curQuiz);
       if ($scope.curQuiz <= $scope.listQuiz.length) {
         $scope.curQuiz++;
         setCurQuiz();
-      } else {
-        var list = _.where($scope.listQuizTmp.slice(), { memorize: 1 });
-        console.log(list.length);
-        $scope.termRemember = list.length;
+        if ($scope.curQuiz === $scope.listQuiz.length) {
+          // result screen
+          resultScreen();
+        }
       }
     };
 
@@ -69,6 +71,21 @@
         $scope.isFlipped[$scope.curQuiz] = false;
       } else {
         $scope.isFlipped[$scope.curQuiz] = true;
+      }
+    };
+
+    // type 0: all / 1: starred
+    $scope.studyAgain = function (type) {
+      // reset
+      $scope.curQuiz = getCurQuiz(1);
+      setCurQuiz();
+      if (type) {
+        $scope.filter(1);
+      } else {
+        $scope.filter(0);
+      }
+      for (let index = $scope.curQuiz; index <= $scope.listQuiz.length; index++) {
+        $scope.isFlipped[index] = false;
       }
     };
 
@@ -110,7 +127,7 @@
       event.stopPropagation();
       quiz.memorize = level;
       CardsApi.remembered(quiz.word._id, level).then(function (res) {
-        console.log('rememberIt', quiz.word._id, level);
+        console.log('rememberIt', res.data);
       });
     };
 
@@ -124,7 +141,7 @@
         $scope.hideBtnRandom = false;
       }
       // reset
-      $scope.curQuiz = getCurQuiz();
+      $scope.curQuiz = getCurQuiz(1);
     };
 
     $scope.hideBtnFilter = false;
@@ -138,8 +155,10 @@
         $scope.hideBtnFilter = false;
       }
       // reset
-      $scope.curQuiz = getCurQuiz();
+      $scope.curQuiz = getCurQuiz(2);
     };
+
+
 
     $scope.handleShowConfirm = function (content, resolve, reject) {
       $scope.dialog = content;
@@ -175,7 +194,14 @@
       }
     }
 
-    function getCurQuiz() {
+    // type 1 random / 2 filter
+    function getCurQuiz(type) {
+      if (type === 1) {
+        $scope.memorize.current_quiz11 = 1;
+        $scope.memorize.current_quiz10 = 1;
+        $scope.memorize.current_quiz01 = 1;
+        $scope.memorize.current_quiz00 = 1;
+      }
       if ($scope.isRandom === 1 && $scope.isFilter === 1) {
         return $scope.memorize.current_quiz11;
       } else if ($scope.isRandom === 1 && $scope.isFilter === 0) {
@@ -191,15 +217,24 @@
     function setCurQuiz() {
       if (!$scope.isBusy) {
         $scope.isBusy = true;
-        CardsApi.current($scope.memorize._id, $scope.isRandom, $scope.isFilter, $scope.curQuiz)
-          .then(function (res) {
-            $scope.memorize.current_quiz00 = res.data.current_quiz00;
-            $scope.memorize.current_quiz10 = res.data.current_quiz10;
-            $scope.memorize.current_quiz01 = res.data.current_quiz01;
-            $scope.memorize.current_quiz11 = res.data.current_quiz11;
-            $scope.isBusy = false;
-          });
+        $timeout(function () {
+          CardsApi.current($scope.memorize._id, $scope.isRandom, $scope.isFilter, $scope.curQuiz)
+            .then(function (res) {
+              $scope.memorize.current_quiz00 = res.data.current_quiz00;
+              $scope.memorize.current_quiz10 = res.data.current_quiz10;
+              $scope.memorize.current_quiz01 = res.data.current_quiz01;
+              $scope.memorize.current_quiz11 = res.data.current_quiz11;
+              $scope.isBusy = false;
+            });
+        }, 500);
       }
+    }
+
+    function resultScreen() {
+      // result screen
+      var list = _.where($scope.listQuizTmp.slice(), { memorize: 1 });
+      $scope.termRemember = list.length;
+      // console.log('termRemember', list.length);
     }
     /** private method */
   }

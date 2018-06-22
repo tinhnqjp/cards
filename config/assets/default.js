@@ -19,6 +19,7 @@ module.exports = {
         // bower:js
         'public/lib/underscore/underscore-min.js',
         'public/lib/angular/angular.js',
+        'public/lib/angular-local-storage/dist/angular-local-storage.min.js',
         'public/lib/angular-animate/angular-animate.js',
         'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
         'public/lib/ng-file-upload/ng-file-upload.js',
@@ -29,6 +30,7 @@ module.exports = {
         'public/lib/angular-ui-router/release/angular-ui-router.js',
         'public/lib/owasp-password-strength-test/owasp-password-strength-test.js',
         'public/lib/ng-dialog/js/ngDialog.min.js',
+        'public/lib/checklist-model/checklist-model.js'
         // endbower
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']

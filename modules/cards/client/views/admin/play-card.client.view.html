@@ -67,6 +67,10 @@
     <i class="far fa-star"></i>
   </button>
 
+  <button class="w3-button w3-white w3-text-red w3-border w3-center" ng-click="setting()">
+    <i class="fa fa-feather"></i>
+  </button>
+
   <button class="w3-button w3-circle w3-theme-l1 w3-right" ng-click="next()" ng-disabled="curQuiz == listQuiz.length + 1">
     <i class="fas fa-caret-right"></i>
   </button>
@@ -77,7 +81,76 @@
   <h1>Nice work!</h1>
   <h3>You just studied {{ listQuiz.length }} terms! </h3>
   <div class="w3-bar">
-    <button class="w3-button w3-green" >Study all {{ listQuizTmp.length }} terms</button>
-    <button class="w3-button w3-theme-action" >Study all {{ termRemember }} terms</button>
+    <button class="w3-button w3-green" ng-click="studyAgain(0)">Study all {{ listQuizTmp.length }} terms</button>
+    <button class="w3-button w3-theme-action" ng-click="studyAgain(1)">Study all {{ termRemember }}
+      <i class="fas fa-star"></i> terms</button>
   </div>
 </div>
+
+<!-- modal template -->
+<script type="text/ng-template" id="setting.html">
+  <div class="modal-header">
+    <h4 class="modal-title">SETTING</h4>
+  </div>
+  <div class="modal-body text-left" id="modal-body">
+    <div class="w3-row">
+      <div class="w3-half w3-container">
+        <h4>FRONT</h4>
+        <p>
+          <label class="w3-text-blue">
+            <b>Data Show</b>
+          </label>
+          <br>
+          <label ng-repeat="item in $ctrl.setting.list" class="w3-margin-right">
+            <input type="checkbox" checklist-model="$ctrl.setting.front" checklist-value="item"> {{item}} 
+          </label>
+        </p>
+        
+        <hr>
+        <p>
+          <label class="w3-text-blue">
+            <b>First Name</b>
+          </label>
+          <select class="w3-select" name="option">
+            <option value="" disabled selected>Choose your option</option>
+            <option value="1" class="w3-text-blue">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+          </select>
+        </p>
+        <p>
+          <label class="w3-text-blue">
+            <b>First Name</b>
+          </label>
+          <select class="w3-select" name="option">
+            <option value="" disabled selected>Choose your option</option>
+            <option value="1">Option 1</option>
+            <option value="2">Option 2</option>
+            <option value="3">Option 3</option>
+          </select>
+        </p>
+      </div>
+      <div class="w3-half w3-container">
+        <h4>BACK</h4>
+        <p>
+          <label class="w3-text-blue">
+            <b>Data Show</b>
+          </label>
+          <br>
+          <label ng-repeat="item in $ctrl.setting.list" class="w3-margin-right">
+            <input type="checkbox" checklist-model="$ctrl.setting.back" checklist-value="item"> {{item}} 
+          </label>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="w3-button w3-gray" type="button" ng-click="$ctrl.cancel()">
+      <i class="fas fa-ban"></i>
+    </button>
+    <button class="w3-button w3-green" type="button" ng-click="$ctrl.ok($ctrl.front)">
+      <i class="fas fa-check"></i>
+    </button>
+  </div>
+</script>
+<!-- #modal template -->

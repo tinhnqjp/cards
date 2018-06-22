@@ -318,8 +318,7 @@ exports.remembered = function (req, res) {
       } else {
         result.forEach(memorize => {
           memorize.words.forEach(item => {
-            // console.log('word', item.word, id);
-            if (item.word === id) {
+            if (item.word.toString() === id) {
               item.memorize = remembered;
             }
           });
@@ -327,7 +326,6 @@ exports.remembered = function (req, res) {
           memorize.save();
         });
         res.json(result);
-        // resolve(result);
       }
     });
 };

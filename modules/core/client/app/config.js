@@ -7,7 +7,7 @@
     applicationEnvironment: window.env,
     applicationModuleName: applicationModuleName,
     applicationModuleVendorDependencies: ['ngResource', 'ngAnimate', 'ngMessages', 'ui.router',
-      'ui.bootstrap', 'ngFileUpload', 'ui-notification', 'ngDialog'],
+      'ui.bootstrap', 'ngFileUpload', 'ui-notification', 'ngDialog', 'LocalStorageModule', 'checklist-model'],
     registerModule: registerModule
   };
 
@@ -40,4 +40,12 @@
     return window._;
     // Underscore should be loaded on the page
   });
+
+  angular.module('LocalStorageModule').config(function (localStorageServiceProvider) {
+      localStorageServiceProvider
+      .setPrefix('flashcard')
+      .setDefaultToCookie(true)
+      .setNotify(true, true);
+  });
+
 }(window));

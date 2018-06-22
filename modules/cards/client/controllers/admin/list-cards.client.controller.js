@@ -6,7 +6,8 @@
     .controller('CardsAdminListController', CardsAdminListController);
 
   CardsAdminListController.$inject = ['CardsService', 'CardsApi', '$scope', '$state', '$window',
-    'Authentication', '$window', 'Notification'];
+    'Authentication', '$window', 'Notification'
+  ];
 
   function CardsAdminListController(CardsService, CardsApi, $scope, $state, $window, Notification) {
     var vm = this;
@@ -18,7 +19,11 @@
 
     function initData() {
       vm.offset = (vm.currentPage - 1) * vm.pageSize;
-      var input = { page: vm.currentPage, limit: vm.pageSize, keyword: vm.keyword };
+      var input = {
+        page: vm.currentPage,
+        limit: vm.pageSize,
+        keyword: vm.keyword
+      };
       CardsService.get(input, function (output) {
         vm.cards = output.laws;
         vm.totalItems = output.total;
