@@ -23,7 +23,7 @@ var MemorizeSchema = new Schema({
   current_quiz10: { type: Number, default: 1 },
   current_quiz01: { type: Number, default: 1 },
   current_quiz11: { type: Number, default: 1 },
-  
+
   card: [{ type: Schema.ObjectId, ref: 'Card' }],
   user: { type: Schema.ObjectId, ref: 'User' },
   updated: { type: Date, default: Date.now },

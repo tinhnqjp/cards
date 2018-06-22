@@ -26,7 +26,7 @@ exports.create = function (req, res) {
     words.forEach(function (word) {
       var objWord = new Word();
       if (word.back) {
-        var strings = word.back.split("\n");
+        var strings = word.back.split('\n');
         if (strings.length > 0) {
           objWord.back_line1 = strings[0] ? strings[0] : '';
           objWord.back_line2 = strings[1] ? strings[1] : '';
@@ -87,7 +87,7 @@ exports.update = function (req, res) {
   new Promise(function (resolve, reject) {
     card.words.forEach(function (word) {
       if (word.back) {
-        var strings = word.back.split("\n");
+        var strings = word.back.split('\n');
         if (strings.length > 0) {
           word.back_line1 = strings[0] ? strings[0] : '';
           word.back_line2 = strings[1] ? strings[1] : '';
@@ -246,7 +246,7 @@ exports.play = function (req, res) {
   try {
     console.log(ids);
     if (ids instanceof Array) {
-      for (var index in ids) {
+      for (var index = 0; index < ids.length; index++) {
         cardIds.push(new mongoose.Types.ObjectId(ids[index]));
       }
     } else {
@@ -284,7 +284,7 @@ exports.play = function (req, res) {
           })
           .then(function (memorize) {
             res.json(memorize);
-          })
+          });
       }
     })
     .catch(function (error) {
@@ -319,7 +319,7 @@ exports.remembered = function (req, res) {
         result.forEach(memorize => {
           memorize.words.forEach(item => {
             // console.log('word', item.word, id);
-            if (item.word == id) {
+            if (item.word === id) {
               item.memorize = remembered;
             }
           });
@@ -343,7 +343,7 @@ exports.tmp = function (req, res) {
   }
   var condition = {
     $and: [
-      { 'user': user },
+      { 'user': req.user },
       { 'words.word': id }]
   };
   Memorize.find(condition)
@@ -357,7 +357,7 @@ exports.tmp = function (req, res) {
         result.forEach(memorize => {
           memorize.words.forEach(item => {
             // console.log('word', item.word, id);
-            if (item.word == id) {
+            if (item.word === id) {
               item.memorize = remembered;
               console.log('word', item.word, id);
             }
@@ -373,8 +373,7 @@ exports.tmp = function (req, res) {
 function getMemorizes(user, cardIds) {
   return new Promise(function (resolve, reject) {
     var condition = {
-      $and: [{ 'user': user },
-      { 'card': cardIds }]
+      $and: [{ 'user': user }, { 'card': cardIds }]
     };
     Memorize.findOne(condition)
       .sort('-updated').populate('words.word').exec(function (error, result) {
@@ -417,7 +416,7 @@ function createCard(title, arrWords, user) {
 function foreachWord(arrWords, card, user) {
   var promises = [];
   arrWords.forEach(word => {
-    var strings = word.split("\t");
+    var strings = word.split('\t');
     var front = strings[0];
     var back = strings[1];
     promises.push(createWord(front, back, card, user));
@@ -433,7 +432,7 @@ function getWordsByCardIds(cardIds) {
         if (err) {
           reject(err);
         } else {
-          resolve(words)
+          resolve(words);
         }
       });
   });

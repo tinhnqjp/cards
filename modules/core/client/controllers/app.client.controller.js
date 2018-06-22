@@ -1,7 +1,9 @@
 (function () {
   'use strict';
 
-  angular.module('core').controller('AppController', AppController);
+  angular
+    .module('core')
+    .controller('AppController', AppController);
 
   AppController.$inject = ['$scope', 'CardsService', 'CardsApi', '$location', '$state', '$stateParams', 'ngDialog'];
 
@@ -40,7 +42,7 @@
         var list = _.where($scope.listQuizTmp.slice(), { memorize: 1 });
         $scope.termRemember = list.length;
       }
-    }
+    };
 
     $scope.termRemember = 0;
     $scope.next = function () {
@@ -116,7 +118,7 @@
     $scope.random = function (isRandom) {
       $scope.isRandom = isRandom;
       $scope.listQuiz = processFilterRandom($scope.isFilter, $scope.isRandom, $scope.listQuizTmp);
-      if (isRandom == 1) {
+      if (isRandom === 1) {
         $scope.hideBtnRandom = true;
       } else {
         $scope.hideBtnRandom = false;
@@ -130,7 +132,7 @@
     $scope.filter = function (isFilter) {
       $scope.isFilter = isFilter;
       $scope.listQuiz = processFilterRandom($scope.isFilter, $scope.isRandom, $scope.listQuizTmp);
-      if (isFilter == 1) {
+      if (isFilter === 1) {
         $scope.hideBtnFilter = true;
       } else {
         $scope.hideBtnFilter = false;
@@ -155,18 +157,19 @@
           reject(res);
         }
       });
-    }
+    };
 
     /** private method */
     function processFilterRandom(isFilter, isRandom, listQuiz) {
+      var list;
       if (isFilter === 1 && isRandom === 1) {
-        var list = _.where(listQuiz.slice(), { memorize: 1 });
-        return list.sort(function (a, b) { return 0.5 - Math.random() });
+        list = _.where(listQuiz.slice(), { memorize: 1 });
+        return list.sort(function (a, b) { return 0.5 - Math.random(); });
       } else if (isFilter === 1) {
         return _.where(listQuiz.slice(), { memorize: 1 });
       } else if (isRandom === 1) {
-        var list = listQuiz.slice();
-        return list.sort(function (a, b) { return 0.5 - Math.random() });
+        list = listQuiz.slice();
+        return list.sort(function (a, b) { return 0.5 - Math.random(); });
       } else {
         return listQuiz.slice();
       }
@@ -202,33 +205,36 @@
   }
 
   /** filter */
-  angular.module('core').filter('breakLine', function () {
-    return function (text) {
-      return text.replace(/\n/g, '<br/>');
-    }
-  });
+  angular
+    .module('core')
+    .filter('breakLine', function () {
+      return function (text) {
+        return text.replace(/\n/g, '<br/>');
+      };
+    })
+    .filter('formatdate', function ($filter) {
+      return function (timestamp) {
+        var currentDate = new Date();
+        var toFormat = new Date(timestamp);
+        if (toFormat.getDate() === currentDate.getDate()
+          && toFormat.getMonth() === currentDate.getMonth()
+          && toFormat.getFullYear() === currentDate.getFullYear()) {
+          return 'Today ' + $filter('date')(toFormat.getTime(), 'H:mma');
+        }
+        if (toFormat.getDate() === (currentDate.getDate() - 1)
+          && toFormat.getMonth() === currentDate.getMonth()
+          && toFormat.getFullYear() === currentDate.getFullYear()) {
+          return 'Yesterday ' + $filter('date')(toFormat.getTime(), 'H:mma');
+        }
 
-  angular.module('core').filter('formatdate', function ($filter) {
-    return function (timestamp) {
-      var currentDate = new Date()
-      var toFormat = new Date(timestamp)
-      if (toFormat.getDate() == currentDate.getDate() && toFormat.getMonth() == currentDate.getMonth() && toFormat.getFullYear() == currentDate.getFullYear()) {
-        return 'Today ' + $filter('date')(toFormat.getTime(), 'H:mma')
-      }
-      if (toFormat.getDate() == (currentDate.getDate() - 1) && toFormat.getMonth() == currentDate.getMonth() && toFormat.getFullYear() == currentDate.getFullYear()) {
-        return 'Yesterday ' + $filter('date')(toFormat.getTime(), 'H:mma')
-      }
-
-      return $filter('date')(toFormat.getTime(), 'EEEE H:mma')
-    }
-  });
-
-  angular.module('core').filter('highlight', function ($sce) {
-    return function (text, phrase) {
-      if (phrase) text = text.replace(new RegExp('(' + phrase + ')', 'gi'),
-        '<span class="highlighted">$1</span>')
-
-      return $sce.trustAsHtml(text)
-    }
-  });
+        return $filter('date')(toFormat.getTime(), 'EEEE H:mma');
+      };
+    }).filter('highlight', function ($sce) {
+      return function (text, phrase) {
+        if (phrase) {
+          text = text.replace(new RegExp('(' + phrase + ')', 'gi'), '<span class="highlighted">$1</span>');
+        }
+        return $sce.trustAsHtml(text);
+      };
+    });
 })();

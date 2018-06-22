@@ -494,7 +494,7 @@ describe('User CRUD tests', function () {
                 res.headers.location.should.be.equal('/password/reset/' + userRes.resetPasswordToken);
 
                 return done();
-            });
+              });
           });
         });
     });
@@ -550,15 +550,15 @@ describe('User CRUD tests', function () {
             verifyPassword: '1234567890Aa$',
             currentPassword: credentials.password
           })
-            .expect(200)
-            .end(function (err, res) {
-              if (err) {
-                return done(err);
-              }
+          .expect(200)
+          .end(function (err, res) {
+            if (err) {
+              return done(err);
+            }
 
-              res.body.message.should.equal('Password changed successfully');
-              return done();
-            });
+            res.body.message.should.equal('Password changed successfully');
+            return done();
+          });
       });
   });
 
@@ -579,15 +579,15 @@ describe('User CRUD tests', function () {
             verifyPassword: '1234567890-ABC-123-Aa$',
             currentPassword: credentials.password
           })
-            .expect(422)
-            .end(function (err, res) {
-              if (err) {
-                return done(err);
-              }
+          .expect(422)
+          .end(function (err, res) {
+            if (err) {
+              return done(err);
+            }
 
-              res.body.message.should.equal('Passwords do not match');
-              return done();
-            });
+            res.body.message.should.equal('Passwords do not match');
+            return done();
+          });
       });
   });
 
@@ -608,15 +608,15 @@ describe('User CRUD tests', function () {
             verifyPassword: '1234567890Aa$',
             currentPassword: 'some_wrong_passwordAa$'
           })
-            .expect(422)
-            .end(function (err, res) {
-              if (err) {
-                return done(err);
-              }
+          .expect(422)
+          .end(function (err, res) {
+            if (err) {
+              return done(err);
+            }
 
-              res.body.message.should.equal('Current password is incorrect');
-              return done();
-            });
+            res.body.message.should.equal('Current password is incorrect');
+            return done();
+          });
       });
   });
 
@@ -637,15 +637,15 @@ describe('User CRUD tests', function () {
             verifyPassword: '',
             currentPassword: credentials.password
           })
-            .expect(422)
-            .end(function (err, res) {
-              if (err) {
-                return done(err);
-              }
+          .expect(422)
+          .end(function (err, res) {
+            if (err) {
+              return done(err);
+            }
 
-              res.body.message.should.equal('Please provide a new password');
-              return done();
-            });
+            res.body.message.should.equal('Please provide a new password');
+            return done();
+          });
       });
   });
 

@@ -8,9 +8,7 @@
   CardsService.$inject = ['$resource', '$log'];
 
   function CardsService($resource, $log) {
-    var Card = $resource('/api/cards/:cardId', {
-      cardId: '@_id'
-    }, {
+    var Card = $resource('/api/cards/:cardId', { cardId: '@_id' }, {
       update: {
         method: 'PUT'
       }
@@ -58,16 +56,16 @@
       return $http.post('/api/cards/' + cardId + '/copy', null, { ignoreLoadingBar: true });
     };
     this.play = function (ids) {
-      return $http.post('/api/play', {ids: ids }, { ignoreLoadingBar: true });
+      return $http.post('/api/play', { ids: ids }, { ignoreLoadingBar: true });
     };
     this.remembered = function (id, remembered) {
-      return $http.post('/api/remembered', {id: id, remembered: remembered }, { ignoreLoadingBar: true });
+      return $http.post('/api/remembered', { id: id, remembered: remembered }, { ignoreLoadingBar: true });
     };
     this.latest = function (input) {
       return $http.post('/api/latest', input, { ignoreLoadingBar: true });
     };
     this.current = function (id, random, filter, quiz) {
-      return $http.post('/api/current', {id: id, random: random, filter: filter, quiz: quiz }, { ignoreLoadingBar: true });
+      return $http.post('/api/current', { id: id, random: random, filter: filter, quiz: quiz }, { ignoreLoadingBar: true });
     };
     return this;
   }

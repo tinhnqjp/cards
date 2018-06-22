@@ -65,12 +65,10 @@ exports.latest = function (req, res) {
               current: memorize.current,
               words: memorize.words.length,
               memorize: sum_memorize,
-              created: memorize.created,
+              created: memorize.created
             };
             array.push(_memorize);
           });
-        } else {
-
         }
         res.json(array);
       }

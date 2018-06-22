@@ -15,9 +15,9 @@
     vm.content;
     initData();
 
-    function initData () {
+    function initData() {
       createEmptyWords();
-    };
+    }
 
     vm.pushWord = function () {
       vm.card.words.push({
@@ -55,7 +55,7 @@
       function errorCallback(res) {
         Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Card save error!' });
       }
-    }
+    };
 
     vm.openModal = function () {
       // init modal
@@ -78,9 +78,9 @@
         vm.content = content;
 
         if (vm.content) {
-          var arrWords = vm.content.split("\n\n");
+          var arrWords = vm.content.split('\n\n');
           arrWords.forEach(word => {
-            var arrString = word.split("\t");
+            var arrString = word.split('\t');
             vm.card.words.push({
               front: arrString[0].trim(),
               back: arrString[1].trim()
@@ -95,18 +95,18 @@
       // console.log(vm.content);
     };
 
-    
+
     /** method private */
     function spliceEmptyWords() {
-      for (var index = vm.card.words.length -1; index >= 0; index--) {
+      for (var index = vm.card.words.length - 1; index >= 0; index--) {
         var word = vm.card.words[index];
-        if(!word.front && !word.back) {
+        if (!word.front && !word.back) {
           vm.card.words.splice(index, 1);
         }
       }
     }
 
-    function createEmptyWords () {
+    function createEmptyWords() {
       if (!vm.card.words || vm.card.words.length === 0) {
         vm.card.words = [];
         for (var index = 1; index <= 5; index++) {
@@ -116,7 +116,7 @@
           });
         }
       }
-    };
+    }
     /** method private */
 
   }
