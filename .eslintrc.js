@@ -40,7 +40,7 @@ module.exports = {
       'one-var': [0, 'never'],
       'one-var-declaration-per-line': [2, 'always'],
       'padded-blocks': 0,
-      'space-before-function-paren': [2, {
+      'space-before-function-paren': [0, {
         'anonymous': 'always',
         'named': 'never',
         'asyncArrow': 'always'
@@ -50,7 +50,7 @@ module.exports = {
       strict: 0,
       'quote-props': 0,
       quotes: [1, 'single'],
-      'wrap-iife': [2, 'outside'],
+      'wrap-iife': [2, 'any'],
       'vars-on-top': 0
     },
     env: {

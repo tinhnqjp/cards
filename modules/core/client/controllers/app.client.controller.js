@@ -1,15 +1,33 @@
-(function () {
+(function() {
   'use strict';
 
-  angular
-    .module('core')
-    .controller('AppController', AppController);
+  angular.module('core').controller('AppController', AppController);
 
-  AppController.$inject = ['$scope', 'CardsService', 'CardsApi',
-    '$location', '$state', '$stateParams', 'ngDialog', '$timeout', 'StorageService'];
+  AppController.$inject = [
+    '$scope',
+    'CardsService',
+    'CardsApi',
+    '$location',
+    '$state',
+    '$stateParams',
+    'ngDialog',
+    '$timeout',
+    'StorageService',
+    '$uibModal'
+  ];
 
-  function AppController($scope, CardsService, CardsApi,
-    $location, $state, $stateParams, ngDialog, $timeout) {
+  function AppController(
+    $scope,
+    CardsService,
+    CardsApi,
+    $location,
+    $state,
+    $stateParams,
+    ngDialog,
+    $timeout,
+    StorageService,
+    $uibModal
+  ) {
     var vm = this;
     $scope.curQuiz;
     $scope.isFlipped = [];
@@ -19,14 +37,34 @@
     $scope.isSpeed = false;
     $scope.ids;
     $scope.hideBtnRandom = false;
+    $scope.settings = {};
 
-    $scope.initData = function () {
+    $scope.initData = function() {
+      $scope.settings = StorageService.getItem('setting');
+      if (!$scope.settings) {
+        $scope.settings = {
+          list: [
+            { id: 'front', text: 'Front' },
+            { id: 'back', text: 'Back' },
+            { id: 'back_line1', text: 'Back 1' },
+            { id: 'back_line2', text: 'Back 2' },
+            { id: 'back_line3', text: 'Back 3' },
+          ],
+          front: ['front'],
+          front_color: ['#0000ff'],
+          front_size: 'font-medium',
+          back_color: ['#ff0000'],
+          back_size: 'font-medium',
+          back: ['back']
+        };
+      }
+
       $scope.ids = $location.search().id;
-      CardsApi.play($scope.ids).then(function (res) {
+      CardsApi.play($scope.ids).then(function(res) {
         $scope.memorize = res.data;
         var list = res.data.words.slice();
         // sort init by index
-        list.sort(function (a, b) {
+        list.sort(function(a, b) {
           if (a.word.card === b.word.card) {
             return a.word.index - b.word.index;
           }
@@ -44,11 +82,10 @@
           resultScreen();
         }
       });
-
     };
 
     $scope.termRemember = 0;
-    $scope.next = function () {
+    $scope.next = function() {
       if ($scope.curQuiz <= $scope.listQuiz.length) {
         $scope.curQuiz++;
         setCurQuiz();
@@ -59,14 +96,14 @@
       }
     };
 
-    $scope.prev = function () {
+    $scope.prev = function() {
       if ($scope.curQuiz > 1) {
         $scope.curQuiz--;
         setCurQuiz();
       }
     };
 
-    $scope.flipped = function () {
+    $scope.flipped = function() {
       if ($scope.isFlipped[$scope.curQuiz]) {
         $scope.isFlipped[$scope.curQuiz] = false;
       } else {
@@ -75,7 +112,7 @@
     };
 
     // type 0: all / 1: starred
-    $scope.studyAgain = function (type) {
+    $scope.studyAgain = function(type) {
       // reset
       $scope.curQuiz = getCurQuiz(1);
       setCurQuiz();
@@ -84,12 +121,16 @@
       } else {
         $scope.filter(0);
       }
-      for (let index = $scope.curQuiz; index <= $scope.listQuiz.length; index++) {
+      for (
+        let index = $scope.curQuiz;
+        index <= $scope.listQuiz.length;
+        index++
+      ) {
         $scope.isFlipped[index] = false;
       }
     };
 
-    $scope.sayIt = function (text) {
+    $scope.sayIt = function(text) {
       event.stopPropagation();
       return new Promise(resolve => {
         var msg = new SpeechSynthesisUtterance();
@@ -100,7 +141,7 @@
       });
     };
 
-    $scope.keypress = function ($event) {
+    $scope.keypress = function($event) {
       var state = $state.current.name;
       if (state === 'admin.cards.play') {
         if ($event.keyCode === 38 || $event.keyCode === 32) {
@@ -123,18 +164,22 @@
       }
     };
 
-    $scope.rememberIt = function (quiz, level = 0) {
+    $scope.rememberIt = function(quiz, level = 0) {
       event.stopPropagation();
       quiz.memorize = level;
-      CardsApi.remembered(quiz.word._id, level).then(function (res) {
+      CardsApi.remembered(quiz.word._id, level).then(function(res) {
         console.log('rememberIt', res.data);
       });
     };
 
     $scope.isRandom = 0;
-    $scope.random = function (isRandom) {
+    $scope.random = function(isRandom) {
       $scope.isRandom = isRandom;
-      $scope.listQuiz = processFilterRandom($scope.isFilter, $scope.isRandom, $scope.listQuizTmp);
+      $scope.listQuiz = processFilterRandom(
+        $scope.isFilter,
+        $scope.isRandom,
+        $scope.listQuizTmp
+      );
       if (isRandom === 1) {
         $scope.hideBtnRandom = true;
       } else {
@@ -146,9 +191,13 @@
 
     $scope.hideBtnFilter = false;
     $scope.isFilter = 0;
-    $scope.filter = function (isFilter) {
+    $scope.filter = function(isFilter) {
       $scope.isFilter = isFilter;
-      $scope.listQuiz = processFilterRandom($scope.isFilter, $scope.isRandom, $scope.listQuizTmp);
+      $scope.listQuiz = processFilterRandom(
+        $scope.isFilter,
+        $scope.isRandom,
+        $scope.listQuizTmp
+      );
       if (isFilter === 1) {
         $scope.hideBtnFilter = true;
       } else {
@@ -158,23 +207,49 @@
       $scope.curQuiz = getCurQuiz(2);
     };
 
-
-
-    $scope.handleShowConfirm = function (content, resolve, reject) {
+    $scope.handleShowConfirm = function(content, resolve, reject) {
       $scope.dialog = content;
-      ngDialog.openConfirm({
-        templateUrl: 'confirmTemplate.html',
-        scope: $scope
-      }).then(function (res) {
-        delete $scope.dialog;
-        if (resolve) {
-          resolve(res);
+      ngDialog
+        .openConfirm({
+          templateUrl: 'confirmTemplate.html',
+          scope: $scope
+        })
+        .then(
+          function(res) {
+            delete $scope.dialog;
+            if (resolve) {
+              resolve(res);
+            }
+          },
+          function(res) {
+            delete $scope.dialog;
+            if (reject) {
+              reject(res);
+            }
+          }
+        );
+    };
+
+    $scope.setting = function() {
+      // init modal
+      var modalInstance = $uibModal.open({
+        animation: true,
+        ariaLabelledBy: 'modal-title',
+        ariaDescribedBy: 'modal-body',
+        templateUrl: 'setting.html',
+        controller: 'ModalSettingCtrl',
+        controllerAs: '$ctrl',
+        size: 'lg',
+        resolve: {
+          setting: function() {
+            return $scope.settings;
+          }
         }
-      }, function (res) {
-        delete $scope.dialog;
-        if (reject) {
-          reject(res);
-        }
+      });
+
+      modalInstance.result.then(function(setting) {
+        $scope.settings = setting;
+        StorageService.setItem('setting', $scope.settings);
       });
     };
 
@@ -183,12 +258,16 @@
       var list;
       if (isFilter === 1 && isRandom === 1) {
         list = _.where(listQuiz.slice(), { memorize: 1 });
-        return list.sort(function (a, b) { return 0.5 - Math.random(); });
+        return list.sort(function(a, b) {
+          return 0.5 - Math.random();
+        });
       } else if (isFilter === 1) {
         return _.where(listQuiz.slice(), { memorize: 1 });
       } else if (isRandom === 1) {
         list = listQuiz.slice();
-        return list.sort(function (a, b) { return 0.5 - Math.random(); });
+        return list.sort(function(a, b) {
+          return 0.5 - Math.random();
+        });
       } else {
         return listQuiz.slice();
       }
@@ -217,15 +296,19 @@
     function setCurQuiz() {
       if (!$scope.isBusy) {
         $scope.isBusy = true;
-        $timeout(function () {
-          CardsApi.current($scope.memorize._id, $scope.isRandom, $scope.isFilter, $scope.curQuiz)
-            .then(function (res) {
-              $scope.memorize.current_quiz00 = res.data.current_quiz00;
-              $scope.memorize.current_quiz10 = res.data.current_quiz10;
-              $scope.memorize.current_quiz01 = res.data.current_quiz01;
-              $scope.memorize.current_quiz11 = res.data.current_quiz11;
-              $scope.isBusy = false;
-            });
+        $timeout(function() {
+          CardsApi.current(
+            $scope.memorize._id,
+            $scope.isRandom,
+            $scope.isFilter,
+            $scope.curQuiz
+          ).then(function(res) {
+            $scope.memorize.current_quiz00 = res.data.current_quiz00;
+            $scope.memorize.current_quiz10 = res.data.current_quiz10;
+            $scope.memorize.current_quiz01 = res.data.current_quiz01;
+            $scope.memorize.current_quiz11 = res.data.current_quiz11;
+            $scope.isBusy = false;
+          });
         }, 500);
       }
     }
@@ -239,35 +322,66 @@
     /** private method */
   }
 
+  /** controll modal open setting */
+  angular
+    .module('core')
+    .controller('ModalSettingCtrl', function($uibModalInstance, setting) {
+      // setting
+      var $ctrl = this;
+      $ctrl.setting = setting;
+      /**
+       * when click button 決定 in modal
+       * @param {*} content selected
+       */
+      $ctrl.ok = function() {
+        $uibModalInstance.close($ctrl.setting);
+      };
+
+      /**
+       * when click button 閉じる in modal
+       */
+      $ctrl.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+      };
+    });
+
   /** filter */
   angular
     .module('core')
-    .filter('breakLine', function () {
-      return function (text) {
+    .filter('breakLine', function() {
+      return function(text) {
         return text.replace(/\n/g, '<br/>');
       };
     })
-    .filter('formatdate', function ($filter) {
-      return function (timestamp) {
+    .filter('formatdate', function($filter) {
+      return function(timestamp) {
         var currentDate = new Date();
         var toFormat = new Date(timestamp);
-        if (toFormat.getDate() === currentDate.getDate()
-          && toFormat.getMonth() === currentDate.getMonth()
-          && toFormat.getFullYear() === currentDate.getFullYear()) {
+        if (
+          toFormat.getDate() === currentDate.getDate() &&
+          toFormat.getMonth() === currentDate.getMonth() &&
+          toFormat.getFullYear() === currentDate.getFullYear()
+        ) {
           return 'Today ' + $filter('date')(toFormat.getTime(), 'H:mma');
         }
-        if (toFormat.getDate() === (currentDate.getDate() - 1)
-          && toFormat.getMonth() === currentDate.getMonth()
-          && toFormat.getFullYear() === currentDate.getFullYear()) {
+        if (
+          toFormat.getDate() === currentDate.getDate() - 1 &&
+          toFormat.getMonth() === currentDate.getMonth() &&
+          toFormat.getFullYear() === currentDate.getFullYear()
+        ) {
           return 'Yesterday ' + $filter('date')(toFormat.getTime(), 'H:mma');
         }
 
         return $filter('date')(toFormat.getTime(), 'EEEE H:mma');
       };
-    }).filter('highlight', function ($sce) {
-      return function (text, phrase) {
+    })
+    .filter('highlight', function($sce) {
+      return function(text, phrase) {
         if (phrase) {
-          text = text.replace(new RegExp('(' + phrase + ')', 'gi'), '<span class="highlighted">$1</span>');
+          text = text.replace(
+            new RegExp('(' + phrase + ')', 'gi'),
+            '<span class="highlighted">$1</span>'
+          );
         }
         return $sce.trustAsHtml(text);
       };

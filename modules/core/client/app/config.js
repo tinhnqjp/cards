@@ -1,4 +1,4 @@
-(function (window) {
+(function(window) {
   'use strict';
 
   var applicationModuleName = 'mean';
@@ -6,8 +6,18 @@
   var service = {
     applicationEnvironment: window.env,
     applicationModuleName: applicationModuleName,
-    applicationModuleVendorDependencies: ['ngResource', 'ngAnimate', 'ngMessages', 'ui.router',
-      'ui.bootstrap', 'ngFileUpload', 'ui-notification', 'ngDialog', 'LocalStorageModule', 'checklist-model'],
+    applicationModuleVendorDependencies: [
+      'ngResource',
+      'ngAnimate',
+      'ngMessages',
+      'ui.router',
+      'ui.bootstrap',
+      'ngFileUpload',
+      'ui-notification',
+      'ngDialog',
+      'LocalStorageModule',
+      'checklist-model'
+    ],
     registerModule: registerModule
   };
 
@@ -23,7 +33,7 @@
   }
 
   // Angular-ui-notification configuration
-  angular.module('ui-notification').config(function (NotificationProvider) {
+  angular.module('ui-notification').config(function(NotificationProvider) {
     NotificationProvider.setOptions({
       delay: 2000,
       startTop: 20,
@@ -36,16 +46,17 @@
   });
 
   var underscore = angular.module('underscore', []);
-  underscore.factory('_', function () {
+  underscore.factory('_', function() {
     return window._;
     // Underscore should be loaded on the page
   });
 
-  angular.module('LocalStorageModule').config(function (localStorageServiceProvider) {
+  angular
+    .module('LocalStorageModule')
+    .config(function(localStorageServiceProvider) {
       localStorageServiceProvider
-      .setPrefix('flashcard')
-      .setDefaultToCookie(true)
-      .setNotify(true, true);
-  });
-
-}(window));
+        .setPrefix('flashcard')
+        .setDefaultToCookie(true)
+        .setNotify(true, true);
+    });
+})(window);

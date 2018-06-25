@@ -24,10 +24,9 @@
             <i class="fas fa-volume-up"></i>
           </button>
         </div>
-        <div class="w3-row w3-text-red vertical-align">
-          <span class="w3-col s12 card-text">{{ quiz.word.front }}</span>
+        <div class="w3-row vertical-align" ng-style="{'color': settings.front_color }">
+          <p class="w3-col s12" data-ng-repeat="st in settings.front"><span class="card-text" ng-class="settings.front_size">{{ quiz.word[st] }}</span></p>
         </div>
-
       </div>
       <div class="w3-card-4 face back w3-center">
         <div class="button-header">
@@ -41,9 +40,9 @@
             <i class="fas fa-volume-up"></i>
           </button>
         </div>
-        <div class="w3-row w3-text-blue-gray vertical-align">
-          <span class="w3-col s12 card-text">{{ quiz.word.back }}</span>
-        </div>
+        <div class="w3-row vertical-align" ng-style="{'color': settings.back_color }">
+            <p class="w3-col s12" data-ng-repeat="st in settings.back"><span class="card-text" ng-class="settings.back_size">{{ quiz.word[st] }}</span></p>
+          </div>
       </div>
     </div>
   </div>
@@ -95,51 +94,69 @@
   <div class="modal-body text-left" id="modal-body">
     <div class="w3-row">
       <div class="w3-half w3-container">
-        <h4>FRONT</h4>
+        <h4 class="w3-text-theme">FRONT</h4>
         <p>
-          <label class="w3-text-blue">
-            <b>Data Show</b>
-          </label>
+          <label>Data Show</label>
           <br>
           <label ng-repeat="item in $ctrl.setting.list" class="w3-margin-right">
-            <input type="checkbox" checklist-model="$ctrl.setting.front" checklist-value="item"> {{item}} 
+            <input type="checkbox" checklist-model="$ctrl.setting.front" checklist-value="item.id"> {{item.text}} 
           </label>
         </p>
-        
-        <hr>
         <p>
-          <label class="w3-text-blue">
-            <b>First Name</b>
-          </label>
-          <select class="w3-select" name="option">
-            <option value="" disabled selected>Choose your option</option>
-            <option value="1" class="w3-text-blue">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
-          </select>
+          <label>Color</label>
+          <input type="color" name="front_color" ng-model="$ctrl.setting.front_color">
         </p>
         <p>
-          <label class="w3-text-blue">
-            <b>First Name</b>
-          </label>
-          <select class="w3-select" name="option">
-            <option value="" disabled selected>Choose your option</option>
-            <option value="1">Option 1</option>
-            <option value="2">Option 2</option>
-            <option value="3">Option 3</option>
+          <label>Front size</label>
+          <select class="w3-input w3-border" name="option" ng-model="$ctrl.setting.front_size">
+            <option value="" disabled selected>Choose front size</option>
+            <option value="font-tiny">tiny</option>
+            <option value="font-small">small</option>
+            <option value="font-medium">medium</option>
+            <option value="font-large">large</option>
+            <option value="font-xlarge">xlarge</option>
           </select>
+        </p>
+        <p class="front">
+          <label>Demo</label><br/>
+          <span class="card-text" ng-style="{'color': $ctrl.setting.front_color }">
+            <span ng-class="$ctrl.setting.front_size">日本語</span>
+          </span>
         </p>
       </div>
       <div class="w3-half w3-container">
-        <h4>BACK</h4>
+        <h4 class="w3-text-theme">BACK</h4>
         <p>
-          <label class="w3-text-blue">
+          <label>
             <b>Data Show</b>
           </label>
           <br>
           <label ng-repeat="item in $ctrl.setting.list" class="w3-margin-right">
-            <input type="checkbox" checklist-model="$ctrl.setting.back" checklist-value="item"> {{item}} 
+            <input type="checkbox" checklist-model="$ctrl.setting.back" checklist-value="item.id"> {{item.text}} 
           </label>
+        </p>
+        <p>
+          <label>
+            <b>Color</b>
+          </label>
+          <input type="color" name="back_color" ng-model="$ctrl.setting.back_color">
+        </p>
+        <p>
+          <label>Front size</label>
+          <select class="w3-select" name="option" ng-model="$ctrl.setting.back_size">
+            <option value="" disabled selected>Choose front size</option>
+            <option value="font-tiny">tiny</option>
+            <option value="font-small">small</option>
+            <option value="font-medium">medium</option>
+            <option value="font-large">large</option>
+            <option value="font-xlarge">xlarge</option>
+          </select>
+        </p>
+        <p class="back">
+          <label>Demo</label><br/>
+          <span class="card-text" ng-style="{'color': $ctrl.setting.back_color }">
+            <span ng-class="$ctrl.setting.back_size">English</span>
+          </span>
         </p>
       </div>
     </div>

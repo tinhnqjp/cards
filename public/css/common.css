@@ -30,8 +30,8 @@
     .play-card-height {
         height: 300px;
     }
-    .flip .card .front .card-text { font-size: 30px !important; }
-    .flip .card .back .card-text { font-size: 20px !important; }
+    .front .card-text { font-size: 30px !important; }
+    .back .card-text { font-size: 20px !important; }
   }
   @media (min-width: 401px) and (max-width: 992px) {
     .header-container {
@@ -58,10 +58,15 @@
 .flip .card .front{position:absolute;z-index:1;cursor:pointer}
 .flip .card .back{-webkit-transform:rotatex(-180deg);color:#000;cursor:pointer}
 .flip .card h1{text-shadow:1px 1px 0 #444}
-.flip .card .front .card-text{ font-size: 50px; }
-.flip .card .back .card-text{ font-size: 40px; }
 .flip .card .card-text{ text-overflow: ellipsis; white-space: pre; }
 .vertical-align{position:relative;top:40%;-webkit-transform:translateY(-40%);-ms-transform:translateY(-40%);transform:translateY(-40%)}
+.front .card-text{ font-size: 50px; }
+.back .card-text{ font-size: 40px; }
+.font-tiny { font-size: 50%; }
+.font-small { font-size: 75%; }
+.font-medium { font-size: 100%; }
+.font-large { font-size: 150%; }
+.font-xlarge { font-size: 200%; }
 /* Latest Activity */
 .pointer {cursor: pointer;}
 .list-latest .w3-card-2 header { padding: 10px 16px; }
