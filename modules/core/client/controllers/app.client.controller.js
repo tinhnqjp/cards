@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   angular.module('core').controller('AppController', AppController);
@@ -39,7 +39,7 @@
     $scope.hideBtnRandom = false;
     $scope.settings = {};
 
-    $scope.initData = function() {
+    $scope.initData = function () {
       $scope.settings = StorageService.getItem('setting');
       if (!$scope.settings) {
         $scope.settings = {
@@ -48,7 +48,7 @@
             { id: 'back', text: 'Back' },
             { id: 'back_line1', text: 'Back 1' },
             { id: 'back_line2', text: 'Back 2' },
-            { id: 'back_line3', text: 'Back 3' },
+            { id: 'back_line3', text: 'Back 3' }
           ],
           front: ['front'],
           front_color: ['#0000ff'],
@@ -60,11 +60,11 @@
       }
 
       $scope.ids = $location.search().id;
-      CardsApi.play($scope.ids).then(function(res) {
+      CardsApi.play($scope.ids).then(function (res) {
         $scope.memorize = res.data;
         var list = res.data.words.slice();
         // sort init by index
-        list.sort(function(a, b) {
+        list.sort(function (a, b) {
           if (a.word.card === b.word.card) {
             return a.word.index - b.word.index;
           }
@@ -85,7 +85,7 @@
     };
 
     $scope.termRemember = 0;
-    $scope.next = function() {
+    $scope.next = function () {
       if ($scope.curQuiz <= $scope.listQuiz.length) {
         $scope.curQuiz++;
         setCurQuiz();
@@ -96,14 +96,14 @@
       }
     };
 
-    $scope.prev = function() {
+    $scope.prev = function () {
       if ($scope.curQuiz > 1) {
         $scope.curQuiz--;
         setCurQuiz();
       }
     };
 
-    $scope.flipped = function() {
+    $scope.flipped = function () {
       if ($scope.isFlipped[$scope.curQuiz]) {
         $scope.isFlipped[$scope.curQuiz] = false;
       } else {
@@ -112,7 +112,7 @@
     };
 
     // type 0: all / 1: starred
-    $scope.studyAgain = function(type) {
+    $scope.studyAgain = function (type) {
       // reset
       $scope.curQuiz = getCurQuiz(1);
       setCurQuiz();
@@ -130,7 +130,7 @@
       }
     };
 
-    $scope.sayIt = function(text) {
+    $scope.sayIt = function (text) {
       event.stopPropagation();
       return new Promise(resolve => {
         var msg = new SpeechSynthesisUtterance();
@@ -141,7 +141,7 @@
       });
     };
 
-    $scope.keypress = function($event) {
+    $scope.keypress = function ($event) {
       var state = $state.current.name;
       if (state === 'admin.cards.play') {
         if ($event.keyCode === 38 || $event.keyCode === 32) {
@@ -164,16 +164,16 @@
       }
     };
 
-    $scope.rememberIt = function(quiz, level = 0) {
+    $scope.rememberIt = function (quiz, level = 0) {
       event.stopPropagation();
       quiz.memorize = level;
-      CardsApi.remembered(quiz.word._id, level).then(function(res) {
+      CardsApi.remembered(quiz.word._id, level).then(function (res) {
         console.log('rememberIt', res.data);
       });
     };
 
     $scope.isRandom = 0;
-    $scope.random = function(isRandom) {
+    $scope.random = function (isRandom) {
       $scope.isRandom = isRandom;
       $scope.listQuiz = processFilterRandom(
         $scope.isFilter,
@@ -191,7 +191,7 @@
 
     $scope.hideBtnFilter = false;
     $scope.isFilter = 0;
-    $scope.filter = function(isFilter) {
+    $scope.filter = function (isFilter) {
       $scope.isFilter = isFilter;
       $scope.listQuiz = processFilterRandom(
         $scope.isFilter,
@@ -207,7 +207,7 @@
       $scope.curQuiz = getCurQuiz(2);
     };
 
-    $scope.handleShowConfirm = function(content, resolve, reject) {
+    $scope.handleShowConfirm = function (content, resolve, reject) {
       $scope.dialog = content;
       ngDialog
         .openConfirm({
@@ -215,13 +215,13 @@
           scope: $scope
         })
         .then(
-          function(res) {
+          function (res) {
             delete $scope.dialog;
             if (resolve) {
               resolve(res);
             }
           },
-          function(res) {
+          function (res) {
             delete $scope.dialog;
             if (reject) {
               reject(res);
@@ -230,7 +230,7 @@
         );
     };
 
-    $scope.setting = function() {
+    $scope.setting = function () {
       // init modal
       var modalInstance = $uibModal.open({
         animation: true,
@@ -241,13 +241,13 @@
         controllerAs: '$ctrl',
         size: 'lg',
         resolve: {
-          setting: function() {
+          setting: function () {
             return $scope.settings;
           }
         }
       });
 
-      modalInstance.result.then(function(setting) {
+      modalInstance.result.then(function (setting) {
         $scope.settings = setting;
         StorageService.setItem('setting', $scope.settings);
       });
@@ -258,14 +258,14 @@
       var list;
       if (isFilter === 1 && isRandom === 1) {
         list = _.where(listQuiz.slice(), { memorize: 1 });
-        return list.sort(function(a, b) {
+        return list.sort(function (a, b) {
           return 0.5 - Math.random();
         });
       } else if (isFilter === 1) {
         return _.where(listQuiz.slice(), { memorize: 1 });
       } else if (isRandom === 1) {
         list = listQuiz.slice();
-        return list.sort(function(a, b) {
+        return list.sort(function (a, b) {
           return 0.5 - Math.random();
         });
       } else {
@@ -296,13 +296,13 @@
     function setCurQuiz() {
       if (!$scope.isBusy) {
         $scope.isBusy = true;
-        $timeout(function() {
+        $timeout(function () {
           CardsApi.current(
             $scope.memorize._id,
             $scope.isRandom,
             $scope.isFilter,
             $scope.curQuiz
-          ).then(function(res) {
+          ).then(function (res) {
             $scope.memorize.current_quiz00 = res.data.current_quiz00;
             $scope.memorize.current_quiz10 = res.data.current_quiz10;
             $scope.memorize.current_quiz01 = res.data.current_quiz01;
@@ -325,7 +325,7 @@
   /** controll modal open setting */
   angular
     .module('core')
-    .controller('ModalSettingCtrl', function($uibModalInstance, setting) {
+    .controller('ModalSettingCtrl', function ($uibModalInstance, setting) {
       // setting
       var $ctrl = this;
       $ctrl.setting = setting;
@@ -333,14 +333,14 @@
        * when click button 決定 in modal
        * @param {*} content selected
        */
-      $ctrl.ok = function() {
+      $ctrl.ok = function () {
         $uibModalInstance.close($ctrl.setting);
       };
 
       /**
        * when click button 閉じる in modal
        */
-      $ctrl.cancel = function() {
+      $ctrl.cancel = function () {
         $uibModalInstance.dismiss('cancel');
       };
     });
@@ -348,13 +348,13 @@
   /** filter */
   angular
     .module('core')
-    .filter('breakLine', function() {
-      return function(text) {
+    .filter('breakLine', function () {
+      return function (text) {
         return text.replace(/\n/g, '<br/>');
       };
     })
-    .filter('formatdate', function($filter) {
-      return function(timestamp) {
+    .filter('formatdate', function ($filter) {
+      return function (timestamp) {
         var currentDate = new Date();
         var toFormat = new Date(timestamp);
         if (
@@ -375,8 +375,8 @@
         return $filter('date')(toFormat.getTime(), 'EEEE H:mma');
       };
     })
-    .filter('highlight', function($sce) {
-      return function(text, phrase) {
+    .filter('highlight', function ($sce) {
+      return function (text, phrase) {
         if (phrase) {
           text = text.replace(
             new RegExp('(' + phrase + ')', 'gi'),

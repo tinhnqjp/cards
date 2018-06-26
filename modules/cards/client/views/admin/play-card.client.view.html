@@ -25,7 +25,9 @@
           </button>
         </div>
         <div class="w3-row vertical-align" ng-style="{'color': settings.front_color }">
-          <p class="w3-col s12" data-ng-repeat="st in settings.front"><span class="card-text" ng-class="settings.front_size">{{ quiz.word[st] }}</span></p>
+          <p class="w3-col s12" data-ng-repeat="st in settings.front">
+            <span class="card-text" ng-class="settings.front_size">{{ quiz.word[st] }}</span>
+          </p>
         </div>
       </div>
       <div class="w3-card-4 face back w3-center">
@@ -41,8 +43,10 @@
           </button>
         </div>
         <div class="w3-row vertical-align" ng-style="{'color': settings.back_color }">
-            <p class="w3-col s12" data-ng-repeat="st in settings.back"><span class="card-text" ng-class="settings.back_size">{{ quiz.word[st] }}</span></p>
-          </div>
+          <p class="w3-col s12" data-ng-repeat="st in settings.back">
+            <span class="card-text" ng-class="settings.back_size">{{ quiz.word[st] }}</span>
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -99,7 +103,7 @@
           <label>Data Show</label>
           <br>
           <label ng-repeat="item in $ctrl.setting.list" class="w3-margin-right">
-            <input type="checkbox" checklist-model="$ctrl.setting.front" checklist-value="item.id"> {{item.text}} 
+            <input type="checkbox" checklist-model="$ctrl.setting.front" checklist-value="item.id"> {{item.text}}
           </label>
         </p>
         <p>
@@ -132,7 +136,7 @@
           </label>
           <br>
           <label ng-repeat="item in $ctrl.setting.list" class="w3-margin-right">
-            <input type="checkbox" checklist-model="$ctrl.setting.back" checklist-value="item.id"> {{item.text}} 
+            <input type="checkbox" checklist-model="$ctrl.setting.back" checklist-value="item.id"> {{item.text}}
           </label>
         </p>
         <p>
