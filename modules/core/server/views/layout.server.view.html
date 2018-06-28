@@ -73,7 +73,7 @@
 
   <!--Application JavaScript Files-->
     {{#each jsFiles}}<script type="text/javascript" src="/{{this}}"></script>{{/each}}
-  
+
   <!--owasp config sync-->
   <script type="text/javascript">
     var sharedConfig = {{{ sharedConfig }}};
@@ -82,7 +82,7 @@
 
   {{#if livereload}}
   <!--Livereload script rendered -->
-  <script type="text/javascript" src="https://{{host}}:35729/livereload.js"></script>
+  <script type="text/javascript" src="{{host}}:35729/livereload.js"></script>
   {{/if}}
   <script>
     // Script to open and close sidebar
@@ -90,7 +90,7 @@
         document.getElementById("mySidebar").style.display = "block";
         document.getElementById("myOverlay").style.display = "block";
     }
-      
+
     function w3_close() {
         document.getElementById("mySidebar").style.display = "none";
         document.getElementById("myOverlay").style.display = "none";

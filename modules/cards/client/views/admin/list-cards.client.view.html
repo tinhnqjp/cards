@@ -15,7 +15,8 @@
       <div class="w3-col s2 m1 l1">
         <button type="submit" class="w3-button w3-teal button-search">
           <span ng-if="!vm.busyLoad" class="glyphicon glyphicon-search"></span>
-          <span ng-if="vm.busyLoad" class="fa fa-spinner fa-spin"></span></button>
+          <span ng-if="vm.busyLoad" class="fa fa-spinner fa-spin"></span>
+        </button>
       </div>
     </div>
     <hr>
@@ -42,15 +43,20 @@
             </button>
           </td>
           <td class="w3-left-align">
-              <a data-ui-sref="admin.cards.edit({cardId: card._id})" data-ng-bind="card.title"></a>
+            <a data-ui-sref="admin.cards.edit({cardId: card._id})" data-ng-bind="card.title"></a>
           </td>
           <td class="w3-center" data-ng-bind="card.words.length"></td>
           <td class="w3-center" data-ng-bind="card.created | date:'yyyy/MM/dd'"></td>
-          <td class="w3-center" style="width: 110px">
+          <td class="w3-center" style="width: 140px">
             <a class="w3-button w3-green w3-small" title="Flash Card" data-ui-sref="admin.cards.play({id: card._id})">
-                <i class="fas fa-play"></i></a> 
+              <i class="fas fa-play"></i>
+            </a>
             <button class="w3-button w3-blue w3-small" title="Edit Study" data-ui-sref="admin.cards.edit({cardId: card._id})">
-              <i class="glyphicon glyphicon-pencil"></i></button>
+              <i class="glyphicon glyphicon-pencil"></i>
+            </button>
+            <button class="w3-button w3-pink w3-small" title="Choose Folder" ng-click="vm.chooseFolder(card)">
+              <i class="fas fa-folder-open"></i>
+            </button>
           </td>
         </tr>
       </tbody>

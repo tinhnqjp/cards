@@ -20,6 +20,12 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/cards/:cardId',
       permissions: '*'
+    }, {
+      resources: '/api/folder',
+      permissions: '*'
+    }, {
+      resources: '/api/folder/:folderId',
+      permissions: '*'
     }]
   }, {
     roles: ['user'],
@@ -29,15 +35,12 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/cards/:cardId',
       permissions: ['get']
-    }]
-  }, {
-    roles: ['guest'],
-    allows: [{
-      resources: '/api/cards',
-      permissions: ['get']
     }, {
-      resources: '/api/cards/:cardId',
-      permissions: ['get']
+      resources: '/api/folder',
+      permissions: '*'
+    }, {
+      resources: '/api/folder/:folderId',
+      permissions: '*'
     }]
   }]);
 };

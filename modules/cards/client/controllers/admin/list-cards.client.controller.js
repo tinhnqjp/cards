@@ -51,10 +51,12 @@
         card.$remove(function () {
           vm.busy = false;
           initData();
-          // Notification.error({ message: 'Card deleted successfully!', title: '<i class="glyphicon glyphicon-remove"></i> Article save error!' });
-          // Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Card deleted successfully!' });
         });
       });
+    };
+
+    vm.chooseFolder = function (card) {
+
     };
   }
 }());

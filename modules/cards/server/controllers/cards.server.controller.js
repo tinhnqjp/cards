@@ -141,7 +141,7 @@ exports.delete = function (req, res) {
       });
     } else {
       Word.remove({ 'card': card._id }).exec(function (err, result) {
-        console.log(err, result);
+        // console.log(err, result);
       });
 
       res.json(card);
