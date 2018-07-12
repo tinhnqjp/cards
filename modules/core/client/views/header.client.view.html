@@ -16,6 +16,13 @@
     <a data-ui-sref="admin.cards.create" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">
       <span class="glyphicon glyphicon-plus"></span> Create</a>
     <hr>
+    <span class="w3-bar-item">Your Folders</span>
+    <div>
+      <a ng-repeat="item in vm.menuFolders" data-ui-sref="admin.cards.folder({folderId: item._id})" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">
+        <i class="fas fa-folder-open"></i> {{ item.title }}</a>
+    </div>
+
+    <hr>
     <div ng-hide="vm.authentication.user">
       <a ui-sref="authentication.signup" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">
         <i class="fas fa-user-plus"></i> Sign Up</a>

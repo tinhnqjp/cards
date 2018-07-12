@@ -22,6 +22,7 @@ module.exports = function (app) {
 
   app.route('/api/cards/:cardId/copy')
     .post(cards.copy);
+  app.route('/api/cards/:cardId/chooseFolder').post(cards.chooseFolder);
 
   // Finish by binding the card middleware
   app.param('cardId', cards.cardByID);
@@ -35,12 +36,18 @@ module.exports = function (app) {
   app.route('/api/current').post(memorizes.current);
 
   // folders
-  app.route('/api/folder').all(cardsPolicy.isAllowed)
+  app.route('/api/folders').all(cardsPolicy.isAllowed)
     .get(folders.list)
     .post(folders.create);
-  app.route('/api/folder/:folderId').all(cardsPolicy.isAllowed)
+  // /api/folders/5b46c48838139a2b9c4acf40
+  app.route('/api/folders/:folderId')
+    .all(cardsPolicy.isAllowed)
+    .get(folders.read)
     .put(folders.update)
     .delete(folders.delete);
+  app.route('/api/folders/:folderId/cards')
+    .get(folders.listCards);
+  app.param('folderId', folders.folderByID);
 
   app.route('/api/folderadd').post(folders.addcard);
 };

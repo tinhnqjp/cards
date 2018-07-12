@@ -47,3 +47,9 @@ a:hover .header-profile-image {
 .h300 { height: 300px; }
 .h400 { height: 400px; }
 .h500 { height: 500px; }
+.mg5 { margin: 5px; }
+.mg10 { margin: 10px; }
+.mg15 { margin: 15px; }
+.mgtb5 { margin: 5px 0px 5px 0; }
+.mgtb10 { margin: 10px 0px 10px 0; }
+.mgtb15 { margin: 15px 0px 15px 0; }

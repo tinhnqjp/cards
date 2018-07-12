@@ -15,7 +15,8 @@
     'StorageService',
     '$uibModal',
     'Socket',
-    'Authentication'
+    'Authentication',
+    'FoldersService'
   ];
 
   function AppController(
@@ -30,7 +31,8 @@
     StorageService,
     $uibModal,
     Socket,
-    Authentication
+    Authentication,
+    FoldersService
   ) {
     var vm = this;
     $scope.curQuiz;

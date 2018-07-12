@@ -15,10 +15,9 @@ var path = require('path'),
  * Create an card
  */
 exports.create = function (req, res) {
-
   var card = new Card();
   card.title = req.body.title;
-
+  card.folders = req.body.folders;
   var words = req.body.words;
   // card.words = req.body.words;
   var wordIds = [];
@@ -82,6 +81,7 @@ exports.read = function (req, res) {
 exports.update = function (req, res) {
   var card = req.card;
   card.title = req.body.title;
+  card.folders = req.body.folders;
   card.words = req.body.words;
   var wordIds = [];
   new Promise(function (resolve, reject) {
@@ -166,6 +166,25 @@ exports.copy = function (req, res) {
       });
     } else {
       res.json(newCard);
+    }
+  });
+};
+
+/**
+ * chooseFolder
+ */
+exports.chooseFolder = function (req, res) {
+  var ids = req.body.folders || null;
+  var card = req.card;
+  card.folders = [];
+  card.folders = ids;
+  card.save(function (err) {
+    if (err) {
+      return res.status(422).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.json({});
     }
   });
 };

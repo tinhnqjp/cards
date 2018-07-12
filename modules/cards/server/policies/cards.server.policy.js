@@ -21,10 +21,10 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/cards/:cardId',
       permissions: '*'
     }, {
-      resources: '/api/folder',
+      resources: '/api/folders',
       permissions: '*'
     }, {
-      resources: '/api/folder/:folderId',
+      resources: '/api/folders/:folderId',
       permissions: '*'
     }]
   }, {
@@ -36,10 +36,10 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/cards/:cardId',
       permissions: ['get']
     }, {
-      resources: '/api/folder',
+      resources: '/api/folders',
       permissions: '*'
     }, {
-      resources: '/api/folder/:folderId',
+      resources: '/api/folders/:folderId',
       permissions: '*'
     }]
   }]);

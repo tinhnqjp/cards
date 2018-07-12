@@ -1,17 +1,26 @@
 <div class="w3-container header-container">
-  <h3>CREATE/EDIT</h3>
+  <h3>{{ vm.title }} {{ vm.card.title }}</h3>
   <ol class="breadcrumb">
     <li>List</li>
-    <li class="active">Create</li>
+    <li class="active">{{ vm.title }}</li>
   </ol>
   <hr>
   <!-- #コントロールボタン -->
   <div class="w3-row">
-    <a class="w3-col l2 m5 s12 w3-button w3-green w3-left" data-ui-sref="admin.cards.play({id: vm.card._id})">
-      <i class="fas fa-play"></i> Flash Card
+    <a class="w3-col l3 m4 s4 w3-button w3-green w3-left" ng-if="vm.card._id" data-ui-sref="admin.cards.play({id: vm.card._id})"
+      title="Flash Card">
+      <i class="fas fa-play"></i>
+      <span class="w3-hide-small">Flash Card</span>
     </a>
-    <button class="w3-col l3 m6 s12 w3-button w3-red w3-right" type="button" ng-click="vm.openModal()">
-      <i class="fas fa-file-excel"></i> Import from excel...</a>
+    <button class="w3-col l3 m4 s4 w3-button w3-orange w3-left" type="button" ng-click="vm.chooseFolder()" title="Choose Folder">
+      <i class="fas fa-folder-open"></i>
+      <span class="w3-hide-small">Choose Folder</span>
+      </a>
+    </button>
+    <button class="w3-col l3 m4 s4 w3-button w3-red w3-right" type="button" ng-click="vm.importModal()" title="Import from excel...">
+      <i class="fas fa-file-excel"></i>
+      <span class="w3-hide-small">Import from excel...</span>
+      </a>
     </button>
 
   </div>
@@ -80,7 +89,7 @@
   <!-- #入力Form -->
 </div>
 <!-- modal template -->
-<script type="text/ng-template" id="myModalContent.html">
+<script type="text/ng-template" id="importModal.html">
   <div class="modal-header">
       <h4 class="modal-title">IMPORT</h4>
       <span>Import your data. Copy and Paste your data here (from Word, Excel, Google Docs, etc.)</span>
@@ -89,7 +98,45 @@
       <textarea name="content" ng-model="$ctrl.content" id="back" class="w3-input w3-border" cols="30" rows="15" placeholder="content"></textarea>
   </div>
   <div class="modal-footer">
-      <button class="w3-button w3-gray" type="button" ng-click="$ctrl.cancel()"><i class="fas fa-ban"></i></button> 
+      <button class="w3-button w3-gray" type="button" ng-click="$ctrl.cancel()"><i class="fas fa-ban"></i></button>
+      <button class="w3-button w3-green" type="button" ng-click="$ctrl.ok($ctrl.content)"><i class="fas fa-check"></i></button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="addFolderModal.html">
+  <div class="modal-header">
+      <h4 class="modal-title">ADD A NEW FOLDER</h4>
+  </div>
+  <div class="modal-body text-left" id="modal-body">
+    <div class="w3-row">
+      <input type="text" class="w3-input w3-border" ng-model="$ctrl.content.title"/>
+    </div>
+  </div>
+  <div class="modal-footer">
+      <button class="w3-button w3-gray" type="button" ng-click="$ctrl.cancel()"><i class="fas fa-ban"></i></button>
+      <button class="w3-button w3-green" type="button" ng-click="$ctrl.ok($ctrl.content)"><i class="fas fa-check"></i></button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="chooseFolderModal.html">
+  <div class="modal-header">
+      <h4 class="modal-title">CHOOSE FOLDER</h4>
+      <span>Add to folder</span>
+  </div>
+  <div class="modal-body text-left" id="modal-body">
+    <div class="w3-row">
+      <button class="w3-col s12 w3-button w3-green mgtb10" type="button" ng-click="$ctrl.addNew()">
+        Create a new folder <span class="glyphicon glyphicon-plus"></span>
+      </button>
+      <hr>
+      <label ng-repeat="item in $ctrl.content.folders" class="w3-col s12 w3-border w3-button">
+        <input type="checkbox" checklist-model="$ctrl.content.ids" checklist-value="item._id" class="w3-col s1">
+        <strong class="w3-col s11">{{item.title}}</strong>
+      </label>
+    </div>
+  </div>
+  <div class="modal-footer">
+      <button class="w3-button w3-gray" type="button" ng-click="$ctrl.cancel()"><i class="fas fa-ban"></i></button>
       <button class="w3-button w3-green" type="button" ng-click="$ctrl.ok($ctrl.content)"><i class="fas fa-check"></i></button>
   </div>
 </script>

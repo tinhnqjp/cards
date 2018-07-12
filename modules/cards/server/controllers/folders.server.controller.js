@@ -57,6 +57,19 @@ exports.list = function (req, res) {
     });
 };
 
+exports.listCards = function (req, res) {
+  var folder = req.folder;
+  Card.find({ folders: folder })
+    .sort('-created').exec(function (err, cards) {
+      res.json(cards);
+    });
+};
+
+exports.read = function (req, res) {
+  var folder = req.folder ? req.folder.toJSON() : {};
+  res.json(folder);
+};
+
 exports.folderByID = function (req, res, next, id) {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
@@ -64,17 +77,19 @@ exports.folderByID = function (req, res, next, id) {
     });
   }
 
-  Folder.findById(id).exec(function (err, folder) {
-    if (err) {
-      return next(err);
-    } else if (!folder) {
-      return res.status(404).send({
-        message: 'No folder with that identifier has been found'
-      });
-    }
-    req.folder = folder;
-    next();
-  });
+  Folder.findById(id)
+    .populate('user', 'username')
+    .exec(function (err, folder) {
+      if (err) {
+        return next(err);
+      } else if (!folder) {
+        return res.status(404).send({
+          message: 'No folder with that identifier has been found'
+        });
+      }
+      req.folder = folder;
+      next();
+    });
 };
 
 /**

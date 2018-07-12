@@ -32,6 +32,18 @@
           roles: ['admin']
         }
       })
+      .state('admin.cards.folder', {
+        url: '/:folderId/folder',
+        templateUrl: '/modules/cards/client/views/admin/list-folder.client.view.html',
+        controller: 'FolderAdminListController',
+        controllerAs: 'vm',
+        data: {
+          roles: ['admin']
+        },
+        resolve: {
+          folderResolve: getFolder
+        }
+      })
       .state('admin.cards.create', {
         url: '/create',
         templateUrl: '/modules/cards/client/views/admin/form-card.client.view.html',
@@ -76,5 +88,12 @@
 
   function newCard(CardsService) {
     return new CardsService();
+  }
+
+  getFolder.$inject = ['$stateParams', 'FoldersService'];
+  function getFolder($stateParams, FoldersService) {
+    return FoldersService.get({
+      folderId: $stateParams.folderId
+    }).$promise;
   }
 }());

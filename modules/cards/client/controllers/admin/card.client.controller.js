@@ -5,17 +5,22 @@
     .module('cards.admin')
     .controller('CardsAdminController', CardsAdminController);
 
-  CardsAdminController.$inject = ['$scope', '$state', '$window', 'cardResolve', 'Authentication', 'Notification', '$uibModal'];
+  CardsAdminController.$inject = ['$scope', '$state', '$window', 'cardResolve', 'Authentication', 'Notification', '$uibModal', 'FoldersService', 'CardsApi'];
 
-  function CardsAdminController($scope, $state, $window, card, Authentication, Notification, $uibModal) {
+  function CardsAdminController($scope, $state, $window, card, Authentication, Notification, $uibModal, FoldersService, CardsApi) {
     var vm = this;
     vm.card = card;
     vm.authentication = Authentication;
     vm.form = {};
     vm.content;
+    vm.folders = [];
+    vm.title = 'Create New';
     initData();
 
     function initData() {
+      if (vm.card._id) {
+        vm.title = 'Edit';
+      }
       createEmptyWords();
     }
 
@@ -46,9 +51,10 @@
       vm.card.createOrUpdate()
         .then(successCallback)
         .catch(errorCallback);
+      console.log(vm.card);
 
       function successCallback(res) {
-        $state.go('admin.cards.list'); // should we send the User to the list or the updated Card's view?
+        // $state.go('admin.cards.list'); // should we send the User to the list or the updated Card's view?
         Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Card saved successfully!' });
       }
 
@@ -57,13 +63,86 @@
       }
     };
 
-    vm.openModal = function () {
+    vm.chooseFolder = function () {
+      var arrayFolder = FoldersService.query();
+      console.log(vm.card.folders);
       // init modal
       var modalInstance = $uibModal.open({
         animation: true,
         ariaLabelledBy: 'modal-title',
         ariaDescribedBy: 'modal-body',
-        templateUrl: 'myModalContent.html',
+        templateUrl: 'chooseFolderModal.html',
+        controller: 'ModalInstanceCtrl',
+        controllerAs: '$ctrl',
+        resolve: {
+          content: {
+            folders: arrayFolder,
+            ids: vm.card.folders
+          }
+        }
+      });
+
+      modalInstance.result.then(function (selectedItem) {
+        // click button folder
+        vm.card.folders = selectedItem.ids;
+        if (vm.card._id) {
+          vm.card.createOrUpdate()
+            .then(successCallback)
+            .catch(errorCallback);
+        }
+
+        function successCallback(res) {
+          console.log(res.data);
+          Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Folders add successfully!' });
+        }
+
+        function errorCallback(res) {
+          Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Folders add error!' });
+        }
+
+      }, function (dismiss) {
+        if (dismiss === 'addNew') {
+          var modalInstanceAdd = $uibModal.open({
+            animation: true,
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: 'addFolderModal.html',
+            controller: 'ModalInstanceCtrl',
+            controllerAs: '$ctrl',
+            resolve: {
+              content: {
+                title: ''
+              }
+            }
+          });
+
+          modalInstanceAdd.result.then(function (content) {
+            var folder = new FoldersService();
+            folder.title = content.title;
+            folder.createOrUpdate()
+              .then(successCallback)
+              .catch(errorCallback);
+
+            function successCallback(res) {
+              Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> folder add new successfully!' });
+              vm.chooseFolder();
+            }
+            function errorCallback(res) {
+              Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> folder save error!' });
+            }
+          });
+        }
+      });
+    };
+
+
+    vm.importModal = function () {
+      // init modal
+      var modalInstance = $uibModal.open({
+        animation: true,
+        ariaLabelledBy: 'modal-title',
+        ariaDescribedBy: 'modal-body',
+        templateUrl: 'importModal.html',
         controller: 'ModalInstanceCtrl',
         controllerAs: '$ctrl',
         size: 'lg',
@@ -94,7 +173,6 @@
 
       // console.log(vm.content);
     };
-
 
     /** method private */
     function spliceEmptyWords() {
@@ -137,6 +215,13 @@
      */
     $ctrl.cancel = function () {
       $uibModalInstance.dismiss('cancel');
+    };
+
+    /**
+     * when click button add new folder in modal
+     */
+    $ctrl.addNew = function () {
+      $uibModalInstance.dismiss('addNew');
     };
   });
 }());
