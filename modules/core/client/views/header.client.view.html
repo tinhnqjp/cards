@@ -15,9 +15,10 @@
       <i class="fas fa-list-ul"></i> Your Study</a>
     <a data-ui-sref="admin.cards.create" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">
       <span class="glyphicon glyphicon-plus"></span> Create</a>
-    <hr>
-    <span class="w3-bar-item">Your Folders</span>
-    <div>
+
+    <div ng-if="vm.menuFolders">
+      <hr>
+      <span class="w3-bar-item">Your Folders</span>
       <a ng-repeat="item in vm.menuFolders" data-ui-sref="admin.cards.folder({folderId: item._id})" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">
         <i class="fas fa-folder-open"></i> {{ item.title }}</a>
     </div>

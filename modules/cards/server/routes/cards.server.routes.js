@@ -36,12 +36,11 @@ module.exports = function (app) {
   app.route('/api/current').post(memorizes.current);
 
   // folders
-  app.route('/api/folders').all(cardsPolicy.isAllowed)
+  app.route('/api/folders')
     .get(folders.list)
     .post(folders.create);
   // /api/folders/5b46c48838139a2b9c4acf40
   app.route('/api/folders/:folderId')
-    .all(cardsPolicy.isAllowed)
     .get(folders.read)
     .put(folders.update)
     .delete(folders.delete);

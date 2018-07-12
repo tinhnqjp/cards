@@ -14,14 +14,21 @@
     vm.authentication = Authentication;
     vm.isCollapsed = false;
     vm.menu = menuService.getMenu('topbar');
-    vm.menuFolders = FoldersService.query();
+    loadMenuForders();
 
     $scope.$on('$stateChangeSuccess', stateChangeSuccess);
 
     function stateChangeSuccess() {
-      vm.menuFolders = FoldersService.query();
+      loadMenuForders();
       // Collapsing the menu after navigation
       vm.isCollapsed = false;
+    }
+
+    function loadMenuForders() {
+      console.log(vm.authentication.user);
+      if (vm.authentication.user) {
+        vm.menuFolders = FoldersService.query();
+      }
     }
   }
 }());
