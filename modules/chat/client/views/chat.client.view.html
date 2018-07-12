@@ -4,26 +4,47 @@
     <h1>Chat Example</h1>
   </div>
   <!-- The message form -->
-  <form class="col-xs-12 col-md-offset-4 col-md-4" ng-submit="vm.sendMessage();">
-    <fieldset class="row">
-      <div class="input-group">
-        <input type="text" id="messageText" name="messageText" class="form-control" ng-model="vm.messageText" placeholder="Enter new message" autofocus>
-        <span class="input-group-btn">
-          <button type="submit" class="btn btn-primary" ng-disabled="!vm.messageText.length">Submit</button>
+  <div class="row">
+    <div class="col-md-3 col-xs-3">
+      <div class="list-group">
+        <button type="button" ng-repeat="item in vm.listUsers" class="list-group-item" ng-click="vm.chatTo(item)">
+          <strong ng-bind="item.username"></strong>
+          <span class="w3-text-green">
+            <i ng-if="item.online" class="fas fa-circle"></i>
+          </span>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-9 col-xs-9">
+      <h3>
+        <strong ng-bind="vm.current.title"></strong>
+        <span class="w3-text-green">
+          <i ng-if="vm.current.online" class="fas fa-circle"></i>
         </span>
-      </div>
-    </fieldset>
-  </form>
-  <ul class="list-unstyled">
-    <!-- List all messages -->
-    <li class="col-xs-12 col-md-offset-4 col-md-4 chat-message" ng-repeat="message in vm.messages">
-      <small class="pull-right text-muted" ng-bind="message.created | date:'mediumTime'"></small>
-      <img ng-src="/{{message.profileImageURL}}" alt="{{message.username}}" class="pull-left chat-profile-image" />
-      <div class="pull-left chat-message-details">
-        <strong ng-bind="message.username"></strong>
-        <br>
-        <span ng-bind="message.text"></span>
-      </div>
-    </li>
-  </ul>
+      </h3>
+      <ul class="list-group borders" ng-repeat="group in vm.messages">
+        <li ng-if="group.room === vm.current._id" ng-repeat="message in group.datas" class="list-group-item">
+          <small class="pull-right text-muted" ng-bind="message.created | date:'mediumTime'"></small>
+          <strong ng-bind="message.username"></strong>
+          <br>
+          <span ng-bind="message.text"></span>
+        </li>
+      </ul>
+      <hr>
+      <form ng-submit="vm.sendMessage();">
+        <div class="input-group">
+          <input type="text" id="messageText" name="messageText" class="form-control" ng-model="vm.messageText" placeholder="Enter new message"
+            autocomplete="off" autofocus>
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-primary" ng-disabled="!vm.messageText.length">Submit</button>
+          </span>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+
+  </div>
+
+
 </section>

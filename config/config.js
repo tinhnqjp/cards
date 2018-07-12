@@ -119,6 +119,10 @@ var validateSessionSecret = function (config, testing) {
   }
 };
 
+var initGlobalVariables = function() {
+  global.onlineUsers = [];
+};
+
 /**
  * Initialize global configuration files
  */
@@ -172,6 +176,7 @@ var initGlobalConfigFiles = function (config, assets) {
  * Initialize global configuration
  */
 var initGlobalConfig = function () {
+  initGlobalVariables();
   // Validate NODE_ENV existence
   validateEnvironmentVariable();
 

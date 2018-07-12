@@ -13,7 +13,9 @@
     'ngDialog',
     '$timeout',
     'StorageService',
-    '$uibModal'
+    '$uibModal',
+    'Socket',
+    'Authentication'
   ];
 
   function AppController(
@@ -26,7 +28,9 @@
     ngDialog,
     $timeout,
     StorageService,
-    $uibModal
+    $uibModal,
+    Socket,
+    Authentication
   ) {
     var vm = this;
     $scope.curQuiz;
@@ -38,6 +42,15 @@
     $scope.ids;
     $scope.hideBtnRandom = false;
     $scope.settings = {};
+    init();
+
+    function init() {
+      if (Authentication.user) {
+        console.log('​init -> Authentication.user', Authentication.user);
+
+        Socket.emit('init', Authentication.user);
+      }
+    }
 
     $scope.initData = function () {
       $scope.settings = StorageService.getItem('setting');

@@ -43,6 +43,9 @@
     });
 
     angular.extend(Users, {
+      listusers: function () {
+        return this.listusers();
+      },
       changePassword: function (passwordDetails) {
         return this.updatePassword(passwordDetails).$promise;
       },
@@ -83,7 +86,23 @@
     }, {
       update: {
         method: 'PUT'
+      },
+      listusers: {
+        method: 'GET',
+        url: '/api/listusers'
       }
     });
   }
+
+  angular
+    .module('users.admin.services')
+    .factory('UsersApi', UsersApi);
+  UsersApi.$inject = ['$http'];
+  function UsersApi($http) {
+    this.listusers = function (cardId) {
+      return $http.get('/api/listusers/', null, { ignoreLoadingBar: true });
+    };
+    return this;
+  }
+
 }());
