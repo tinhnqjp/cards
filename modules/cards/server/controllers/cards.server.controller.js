@@ -256,62 +256,124 @@ exports.cardByID = function (req, res, next, id) {
 
 exports.play = function (req, res) {
   var ids = req.body.ids || null;
-  if (!ids) {
+  var folder_ids = req.body.folder_ids || null;
+  if (!ids && !folder_ids) {
     return res.status(422).send({
       message: 'ids null'
     });
   }
   var cardIds = [];
-  try {
-    console.log(ids);
-    if (ids instanceof Array) {
-      for (var index = 0; index < ids.length; index++) {
-        cardIds.push(new mongoose.Types.ObjectId(ids[index]));
-      }
-    } else {
-      cardIds.push(new mongoose.Types.ObjectId(ids));
-    }
-  } catch (error) {
-    console.log({ message: 'Id incorrect' });
-  }
-
-  // save
-  getMemorizes(req.user, cardIds)
-    .then(function (memorizes) {
-      if (memorizes) {
-        res.json(memorizes);
+  // process by id of card
+  if (ids) {
+    try {
+      if (ids instanceof Array) {
+        for (var index = 0; index < ids.length; index++) {
+          cardIds.push(new mongoose.Types.ObjectId(ids[index]));
+        }
       } else {
-        getWordsByCardIds(cardIds)
-          .then(function (listWord) {
-            var words = [];
-            listWord.forEach(word => {
-              words.push({
-                word: word,
-                memorize: 0
-              });
-            });
-            var memorize = new Memorize();
-            memorize.user = req.user;
-            memorize.card = cardIds;
-            memorize.words = words;
-            memorize.current_quiz00 = 1;
-            memorize.current_quiz10 = 1;
-            memorize.current_quiz01 = 1;
-            memorize.current_quiz11 = 1;
-
-            return memorize.save();
-          })
-          .then(function (memorize) {
-            res.json(memorize);
-          });
+        cardIds.push(new mongoose.Types.ObjectId(ids));
       }
-    })
-    .catch(function (error) {
-      console.error('**ERROR**', error);
-      return res.status(422).send({
-        message: error
+    } catch (error) {
+      console.log({ message: 'Id incorrect' });
+    }
+
+    // save
+    getMemorizesByCards(req.user, cardIds)
+      .then(function (memorizes) {
+        if (memorizes) {
+          res.json(memorizes);
+        } else {
+          getWordsByCardIds(cardIds)
+            .then(function (listWord) {
+              var words = [];
+              listWord.forEach(word => {
+                words.push({
+                  word: word,
+                  memorize: 0
+                });
+              });
+              var memorize = new Memorize();
+              memorize.user = req.user;
+              memorize.card = cardIds;
+              memorize.words = words;
+              memorize.current_quiz00 = 1;
+              memorize.current_quiz10 = 1;
+              memorize.current_quiz01 = 1;
+              memorize.current_quiz11 = 1;
+
+              return memorize.save();
+            })
+            .then(function (memorize) {
+              res.json(memorize);
+            });
+        }
+      })
+      .catch(function (error) {
+        console.error('**ERROR**', error);
+        return res.status(422).send({
+          message: error
+        });
       });
-    });
+    // end process by id of card
+  } else {
+    // process by id of folder
+    var folderIds = [];
+    try {
+      if (folder_ids instanceof Array) {
+        for (var i = 0; i < folder_ids.length; i++) {
+          folderIds.push(new mongoose.Types.ObjectId(folder_ids[i]));
+        }
+      } else {
+        folderIds.push(new mongoose.Types.ObjectId(folder_ids));
+      }
+    } catch (error) {
+      console.log({ message: 'folderIds incorrect' });
+    }
+    // save
+    getMemorizesByFolders(req.user, folderIds)
+      .then(function (memorizes) {
+        if (memorizes) {
+          console.log('​exports.play -> memorizes', memorizes);
+          res.json(memorizes);
+        } else {
+          var listCard = [];
+          getCardsByFolders(folderIds)
+            .then(function (_listCard) {
+              listCard = _listCard;
+              return getWordsByCardIds(listCard);
+            })
+            .then(function (listWord) {
+              var words = [];
+              listWord.forEach(word => {
+                words.push({
+                  word: word,
+                  memorize: 0
+                });
+              });
+              var memorize = new Memorize();
+              memorize.user = req.user;
+              memorize.card = listCard;
+              memorize.folder = folderIds;
+              memorize.words = words;
+              memorize.current_quiz00 = 1;
+              memorize.current_quiz10 = 1;
+              memorize.current_quiz01 = 1;
+              memorize.current_quiz11 = 1;
+
+              return memorize.save();
+            })
+            .then(function (memorize) {
+              res.json(memorize);
+            });
+        }
+      })
+      .catch(function (error) {
+        console.error('**ERROR**', error);
+        return res.status(422).send({
+          message: error
+        });
+      });
+  }
 };
 
 exports.remembered = function (req, res) {
@@ -351,46 +413,48 @@ exports.remembered = function (req, res) {
 
 
 exports.tmp = function (req, res) {
-  var id = req.body.id || null;
-  var remembered = req.body.remembered || null;
-  if (!id) {
-    return res.status(422).send({
-      message: 'id null'
-    });
-  }
+  var cardIds = [];
+  cardIds.push(new mongoose.Types.ObjectId('5b2a06252339a130e0f43147'));
   var condition = {
-    $and: [
-      { 'user': req.user },
-      { 'words.word': id }]
+    $and: [{ 'card': cardIds }]
   };
-  Memorize.find(condition)
-    .sort('-updated').exec(function (error, result) {
+  Memorize.findOne(condition)
+    .sort('-updated').populate('words.word').exec(function (error, result) {
+
       if (error) {
-        return res.status(422).send({
-          message: error
-        });
-        // reject(error);
+        console.log('​exports.tmp -> error', error);
+
       } else {
-        result.forEach(memorize => {
-          memorize.words.forEach(item => {
-            // console.log('word', item.word, id);
-            if (item.word === id) {
-              item.memorize = remembered;
-              console.log('word', item.word, id);
-            }
-          });
-          memorize.save();
-        });
+        console.log('​exports.tmp -> result', result);
         res.json(result);
-        // resolve(result);
       }
     });
 };
 
-function getMemorizes(user, cardIds) {
+function getMemorizesByCards(user, cardIds) {
   return new Promise(function (resolve, reject) {
     var condition = {
       $and: [{ 'user': user }, { 'card': cardIds }]
+    };
+    Memorize.findOne(condition)
+      .sort('-updated').populate('words.word').exec(function (error, result) {
+        if (error) {
+          reject(error);
+        } else {
+          if (result) {
+            result.updated = Date.now();
+            result.save();
+          }
+          resolve(result);
+        }
+      });
+  });
+}
+
+function getMemorizesByFolders(user, folderIds) {
+  return new Promise(function (resolve, reject) {
+    var condition = {
+      $and: [{ 'user': user }, { 'folder': folderIds }]
     };
     Memorize.findOne(condition)
       .sort('-updated').populate('words.word').exec(function (error, result) {
@@ -452,6 +516,17 @@ function getWordsByCardIds(cardIds) {
           resolve(words);
         }
       });
+  });
+}
+
+function getCardsByFolders(folderIds) {
+  return new Promise(function (resolve, reject) {
+    Card.find({ 'folders': { $in: folderIds } }).sort('-created').exec(function (err, _cards) {
+      if (err) {
+        reject(err);
+      }
+      resolve(_cards);
+    });
   });
 }
 

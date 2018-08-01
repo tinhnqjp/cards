@@ -58,8 +58,8 @@
     this.chooseFolder = function (cardId, listFolder) {
       return $http.post('/api/cards/' + cardId + '/chooseFolder', { folders: listFolder }, { ignoreLoadingBar: true });
     };
-    this.play = function (ids) {
-      return $http.post('/api/play', { ids: ids }, { ignoreLoadingBar: true });
+    this.play = function (input) {
+      return $http.post('/api/play', input, { ignoreLoadingBar: true });
     };
     this.remembered = function (id, remembered) {
       return $http.post('/api/remembered', { id: id, remembered: remembered }, { ignoreLoadingBar: true });

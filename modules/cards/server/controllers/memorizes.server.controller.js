@@ -23,6 +23,7 @@ exports.latest = function (req, res) {
     .find(condition)
     .sort('-created')
     .populate('card', 'title')
+    .populate('folder', 'title')
     .exec(function (err, results) {
       if (err) {
         return res.status(422).send({
@@ -38,28 +39,43 @@ exports.latest = function (req, res) {
               sum_memorize = sum_memorize + word.memorize;
             });
 
+
             // title
-            var isGroup = 0;
+            var isFolder = false;
             var title = '';
             var param = [];
-            if (memorize.card.length > 1) {
-              isGroup = 1;
-              memorize.card.forEach((card, index, array) => {
-                title += card.title;
-                param.push(card._id);
-                if (index !== (array.length - 1)) {
-                  title += '\n';
-                }
-              });
+            if (memorize.folder.length > 0) {
+              isFolder = true;
+              if (memorize.folder.length > 1) {
+                memorize.folder.forEach((_folder, index, array) => {
+                  title += _folder.title;
+                  param.push(_folder._id);
+                  if (index !== (array.length - 1)) {
+                    title += '\n';
+                  }
+                });
+              } else {
+                title = memorize.folder[0] ? memorize.folder[0].title : '';
+                param.push(memorize.folder[0] ? memorize.folder[0]._id : '');
+              }
             } else {
-              title = memorize.card[0] ? memorize.card[0].title : '';
-              param.push(memorize.card[0] ? memorize.card[0]._id : '');
+              if (memorize.card.length > 1) {
+                memorize.card.forEach((card, index, array) => {
+                  title += card.title;
+                  param.push(card._id);
+                  if (index !== (array.length - 1)) {
+                    title += '\n';
+                  }
+                });
+              } else {
+                title = memorize.card[0] ? memorize.card[0].title : '';
+                param.push(memorize.card[0] ? memorize.card[0]._id : '');
+              }
             }
             // param
-
             var _memorize = {
               _id: memorize._id,
-              isGroup: isGroup,
+              isFolder: isFolder,
               title: title,
               param: param,
               current: memorize.current,

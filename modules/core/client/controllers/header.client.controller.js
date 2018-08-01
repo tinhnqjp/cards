@@ -25,7 +25,6 @@
     }
 
     function loadMenuForders() {
-      console.log(vm.authentication.user);
       if (vm.authentication.user) {
         vm.menuFolders = FoldersService.query();
       }

@@ -48,7 +48,6 @@
 
     function init() {
       if (Authentication.user) {
-        console.log('​init -> Authentication.user', Authentication.user);
 
         Socket.emit('init', Authentication.user);
       }
@@ -75,7 +74,13 @@
       }
 
       $scope.ids = $location.search().id;
-      CardsApi.play($scope.ids).then(function (res) {
+      $scope.folder_ids = $location.search().folder_id;
+      var input = { ids: $scope.ids };
+      if (!$scope.ids) {
+        input = { folder_ids: $scope.folder_ids };
+      }
+
+      CardsApi.play(input).then(function (res) {
         $scope.memorize = res.data;
         var list = res.data.words.slice();
         // sort init by index

@@ -2,15 +2,20 @@
   <h3>
     <i class="fas fa-folder-open"></i>
     <span class="w3-margin-right">{{ vm.folder.title }} </span>
-    <a class="w3-button w3-blue w3-tiny pull-right" title="Edit Folder">
+    <a class="w3-button w3-blue w3-tiny pull-right mglr5" title="Edit Folder">
       <i class="glyphicon glyphicon-pencil"></i>
     </a>
-    <a class="w3-button w3-red w3-tiny pull-right" title="Remove Folder" ng-click="vm.remove()">
+    <a class="w3-button w3-red w3-tiny pull-right mglr5" title="Remove Folder" ng-click="vm.remove()">
       <i class="glyphicon glyphicon-trash"></i>
     </a>
   </h3>
-  <a class="w3-button w3-green pull-right" title="Create Study" data-ui-sref="admin.cards.create">
+
+  <a class="w3-button w3-green pull-right mglr5" title="Create Study" data-ui-sref="admin.cards.create">
     <span class="glyphicon glyphicon-plus"></span> Create Study
+  </a>
+
+  <a class="w3-button w3-green pull-right mglr5" title="Flash Card" data-ui-sref="admin.cards.play({folder_id: vm.folder._id})">
+    <i class="fas fa-play"></i> Play
   </a>
   <ol class="breadcrumb">
     <li class="active">Create by {{ vm.folder.user.username }}</li>
@@ -47,7 +52,7 @@
         <tr data-ng-repeat="card in vm.cards | filter:vm.keyword" ng-mouseenter="options=true" ng-mouseleave="options=false">
           <td class="w3-center" style="width: 100px;">
             <span ng-hide="options">{{ vm.offset + $index + 1 }}</span>
-            <button title="Remove folder" ng-show="options" class="w3-button w3-red w3-small" ng-click="vm.remove(card)">
+            <button title="Remove folder" ng-show="options" class="w3-button w3-red w3-small" ng-click="vm.removeCard(card)">
               <i class="glyphicon glyphicon-trash"></i>
             </button>
           </td>

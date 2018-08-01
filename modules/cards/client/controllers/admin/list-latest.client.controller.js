@@ -24,5 +24,16 @@
     vm.search = function () {
       initData();
     };
+
+    vm.playRedirect = function (param, isFolder = false) {
+      // admin.cards.play({id: item.param})
+      var query = {};
+      if (!isFolder) {
+        query = { id: param };
+      } else {
+        query = { folder_id: param };
+      }
+      $state.go('admin.cards.play', query);
+    };
   }
 }());

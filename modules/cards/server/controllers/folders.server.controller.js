@@ -73,7 +73,7 @@ exports.read = function (req, res) {
 exports.folderByID = function (req, res, next, id) {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
-      message: 'Article is invalid'
+      message: 'Folder is invalid'
     });
   }
 

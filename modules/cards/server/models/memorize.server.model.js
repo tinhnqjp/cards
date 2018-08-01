@@ -25,6 +25,7 @@ var MemorizeSchema = new Schema({
   current_quiz11: { type: Number, default: 1 },
 
   card: [{ type: Schema.ObjectId, ref: 'Card' }],
+  folder: [{ type: Schema.ObjectId, ref: 'Folder' }],
   user: { type: Schema.ObjectId, ref: 'User' },
   updated: { type: Date, default: Date.now },
   created: { type: Date, default: Date.now }

@@ -69,7 +69,7 @@
           cardResolve: getCard
         }
       }).state('admin.cards.play', {
-        url: '/play?id',
+        url: '/play?id&folder_id',
         templateUrl: '/modules/cards/client/views/admin/play-card.client.view.html',
         controller: 'PlayAdminController',
         controllerAs: 'vm'
